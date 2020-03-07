@@ -16,10 +16,8 @@ import com.amazonaws.services.dynamodbv2.model.ConditionalOperator;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.amazonaws.services.dynamodbv2.model.TransactionCanceledException;
 import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
-import com.google.inject.Inject;
 import com.paytar2800.stockalertcommons.StockUpdatePriority;
 import com.paytar2800.stockalertcommons.ddb.CustomDynamoDBMapper;
-import com.paytar2800.stockalertcommons.ddb.DDBUtils;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
@@ -46,13 +44,8 @@ public class AlertDDBImpl implements AlertDAO {
 
     private CustomDynamoDBMapper customDynamoDBMapper;
 
-    @Inject
     public AlertDDBImpl(CustomDynamoDBMapper customDynamoDBMapper) {
         this.customDynamoDBMapper = customDynamoDBMapper;
-    }
-
-    public AlertDDBImpl(){
-        customDynamoDBMapper = DDBUtils.getCustomDynamoDBMapper();
     }
 
     @Override

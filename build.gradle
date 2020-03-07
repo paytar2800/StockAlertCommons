@@ -28,7 +28,6 @@ dependencies {
 
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
 
-    compile group: 'com.google.inject', name: 'guice', version: '4.2.2'
 }
 
 

@@ -1,13 +1,10 @@
 package com.paytar2800.stockalertcommons.ddb.user;
 
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.google.inject.Inject;
-import com.paytar2800.stockalertcommons.ddb.DDBUtils;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import lombok.NonNull;
 
@@ -21,13 +18,8 @@ public class UserDDBImpl implements UserDAO {
 
     private DynamoDBMapper dynamoDBMapper;
 
-    @Inject
     public UserDDBImpl(DynamoDBMapper dynamoDBMapper){
         this.dynamoDBMapper = dynamoDBMapper;
-    }
-
-    public UserDDBImpl(){
-        this.dynamoDBMapper = DDBUtils.getDynamoDBMapper();
     }
 
     public void putItem(@NonNull UserDataItem userDataItem) {
