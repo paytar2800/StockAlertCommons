@@ -60,6 +60,29 @@ public class UserDDBImpl implements UserDAO {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<String> getUserIdForEmail(@NonNull String emailId) {
+        Map<String, AttributeValue> eav = new HashMap<>();
+        String secondaryKey = ":val1";
+        eav.put(secondaryKey, new AttributeValue().withS(emailId));
+
+        DynamoDBQueryExpression<UserDataItem> queryExpression =
+                new DynamoDBQueryExpression<UserDataItem>()
+                        .withKeyConditionExpression(
+                                UserDDBConstants.TABLE_EMAIL_KEY + " = " + secondaryKey)
+                        .withExpressionAttributeValues(eav)
+                        .withIndexName(UserDDBConstants.TABLE_EMAIL_GSI_KEY)
+                        .withConsistentRead(false);
+
+        PaginatedQueryList<UserDataItem> resultList = dynamoDBMapper.query(UserDataItem.class, queryExpression);
+
+        if (resultList != null && !resultList.isEmpty()) {
+            return Optional.ofNullable(resultList.get(0).getUserId());
+        }
+
+        return Optional.empty();
+    }
+
     public Optional<UserDataItem> getItemUsingUserId(@NonNull String userId) {
         return Optional.ofNullable(dynamoDBMapper.load(UserDataItem.class, userId));
     }

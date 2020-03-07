@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserDAO {
 
-    Optional<UserDataItem> getItemUsingEmail(@NonNull String emailId);
+    Optional<String> getUserIdForEmail(@NonNull String emailId);
 
     Optional<UserDataItem> getItemUsingUserId(@NonNull String userId);
 
