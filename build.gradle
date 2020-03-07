@@ -5,7 +5,6 @@ plugins {
 
 group 'com.paytar2800'
 version '1.0-SNAPSHOT'
-project.ext.artifactId 'stockalertcommons'
 
 sourceCompatibility = 1.8
 
