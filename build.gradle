@@ -3,7 +3,7 @@ plugins {
     id "io.freefair.lombok" version "4.1.6"
 }
 
-group 'stockalertcommons'
+group 'com.paytar2800'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
