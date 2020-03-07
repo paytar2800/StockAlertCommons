@@ -11,6 +11,5 @@ public class UserDDBConstants {
     public static final String TABLE_SUB_STATUS_KEY = "SubscriptionStatus";
 
     public static final int UNSUBSCRIBED_CODE = -1;
-    public static final int PREMIUM1_CODE = 1;
-    public static final int PREMIUM2_CODE = 2;
+    public static final int PREMIUM_SUBSCRIBED_CODE = 1;
 }
