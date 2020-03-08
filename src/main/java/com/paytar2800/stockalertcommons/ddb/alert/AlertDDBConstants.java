@@ -14,11 +14,11 @@ public class AlertDDBConstants {
     public static final String ALERT_SIMPLEDAILYPERCENTALERT_KEY = "DailyPer";
     public static final String ALERT_NETPERCENTCHANGEALERT_KEY = "NetPer";
     public static final String ALERT_LASTTRIGGERTIME_KEY = "TT";
-    public static final String ALERT_BASE_PRICE_KEY = "B";
-    public static final String ALERT_LOW_PRICE_KEY = "L";
-    public static final String ALERT_HIGH_PRICE_KEY = "H";
-    public static final String ALERT_LOW_PERCENT_KEY = "L";
-    public static final String ALERT_HIGH_PERCENT_KEY = "H";
+    public static final String ALERT_BASE_PRICE_KEY = "Ba";
+    public static final String ALERT_LOW_PRICE_KEY = "Lo";
+    public static final String ALERT_HIGH_PRICE_KEY = "Hi";
+    public static final String ALERT_LOW_PERCENT_KEY = "Lo";
+    public static final String ALERT_HIGH_PERCENT_KEY = "Hi";
     public static final String ALERT_TENDAYVOLPERCENT_KEY = "10d";
     public static final String ALERT_THREEMONTHVOLPERCENT_KEY = "3M";
 }
