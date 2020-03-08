@@ -1,7 +1,6 @@
 package com.paytar2800.stockalertcommons.api;
 
 public class APIParamConstants {
-
     /*
      * AlertAPI Params
      */

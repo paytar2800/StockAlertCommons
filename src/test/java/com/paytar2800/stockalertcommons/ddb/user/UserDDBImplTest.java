@@ -59,10 +59,9 @@ public class UserDDBImplTest {
         itemList.forEach(actualItem -> {
             Optional<UserDataItem> expected;
             try {
-                expected = userDAO.getItemUsingEmail(actualItem.getEmailId());
-                assertTrue(expected.isPresent());
-                assertEquals(expected.get().getEmailId(), actualItem.getEmailId());
-                assertEquals(expected.get().getUserId(), actualItem.getUserId());
+                Optional<String> userId = userDAO.getUserIdForEmail(actualItem.getEmailId());
+                assertTrue(userId.isPresent());
+                assertEquals(userId.get(), actualItem.getUserId());
             } catch (Exception e) {
                 fail("failed with exception = " + e.getMessage());
             }
