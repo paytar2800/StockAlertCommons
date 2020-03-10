@@ -1,4 +1,4 @@
-package ddb.user;
+package com.paytar2800.stockalertcommons.ddb.user;
 
 import com.amazonaws.util.IOUtils;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;

@@ -1,7 +1,5 @@
-package ddb.alert;
+package com.paytar2800.stockalertcommons.ddb.alert;
 
-import com.paytar2800.stockalertcommons.ddb.alert.AlertDAO;
-import com.paytar2800.stockalertcommons.ddb.alert.AlertDDBImpl;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.NetPercentChangeAlertItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.SimpleDailyPercentAlertItem;
@@ -9,7 +7,7 @@ import com.paytar2800.stockalertcommons.ddb.alert.model.SimplePriceAlertItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.SimpleVolumePercentAlertItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
-import ddb.util.LocalDDBServer;
+import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

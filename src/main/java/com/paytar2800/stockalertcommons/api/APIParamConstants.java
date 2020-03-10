@@ -27,7 +27,4 @@ public class APIParamConstants {
     public static final String API_ISALERTENABLED_PARAM = "enableAlert";
     public static final String API_SUB_STATUS_PARAM = "subStatus";
 
-    public static final int UNSUBSCRIBED_CODE = -1;
-    public static final int PREMIUM_SUBSCRIBED_CODE = 1;
-
 }
