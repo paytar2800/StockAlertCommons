@@ -1,7 +1,9 @@
-package com.paytar2800.stockalertcommons.ddb.user;
+package ddb.user;
 
+import com.paytar2800.stockalertcommons.ddb.user.UserDAO;
+import com.paytar2800.stockalertcommons.ddb.user.UserDDBImpl;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
-import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
+import ddb.util.LocalDDBServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

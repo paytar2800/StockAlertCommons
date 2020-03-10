@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "4.1.6"
 }
 
 group 'com.paytar2800'
@@ -8,7 +7,10 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    compile(project(":ddb"))
-    compile(project(":api"))
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

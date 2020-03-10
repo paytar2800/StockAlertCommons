@@ -1,4 +1,4 @@
-package com.paytar2800.stockalertcommons.ddb.alert;
+package ddb.alert;
 
 import com.amazonaws.util.IOUtils;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;

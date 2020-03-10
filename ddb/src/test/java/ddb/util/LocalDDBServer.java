@@ -1,4 +1,4 @@
-package com.paytar2800.stockalertcommons.ddb.util;
+package ddb.util;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
