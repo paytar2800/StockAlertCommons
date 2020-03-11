@@ -25,6 +25,7 @@ public class UserData {
                 Integer snoozeTime = Integer.parseInt(fields[2]);
                 Boolean isAlertEnabled = Boolean.parseBoolean(fields[3]);
                 Integer subStatus = Integer.parseInt(fields[4]);
+                String deviceToken = fields[5];
 
                 UserDataItem dataItem = UserDataItem.builder()
                         .emailId(emailId)
@@ -32,6 +33,7 @@ public class UserData {
                         .isAlertEnabled(isAlertEnabled)
                         .subscriptionStatus(subStatus)
                         .alertSnoozeTimeSeconds(snoozeTime)
+                        .deviceToken(deviceToken)
                         .build();
 
                 list.add(dataItem);

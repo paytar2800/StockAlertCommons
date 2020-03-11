@@ -18,6 +18,7 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EMAIL_I
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISALERTENABLED_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SUB_STATUS_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_USER_ID_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_TOKEN;
 
 /**
  * UserData Table Item
@@ -52,6 +53,10 @@ public class UserDataItem {
     @SerializedName(API_SUB_STATUS_PARAM)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_SUB_STATUS_KEY)
     private Integer subscriptionStatus;
+
+    @SerializedName(API_DEVICE_TOKEN)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_TOKEN_KEY)
+    private String deviceToken;
 
     public String toJson() {
         Gson gson = new Gson();

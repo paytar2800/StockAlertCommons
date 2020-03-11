@@ -9,6 +9,7 @@ public class UserDDBConstants {
     public static final String TABLE_ALERTSNOOZETIME_KEY = "SnoozeTime";
     public static final String TABLE_ISALERTENABLED_KEY = "AlertEnabled";
     public static final String TABLE_SUB_STATUS_KEY = "SubStatus";
+    public static final String TABLE_DEVICE_TOKEN_KEY = "DeviceToken";
 
     public static final int UNSUBSCRIBED_CODE = -1;
     public static final int PREMIUM_SUBSCRIBED_CODE = 1;
