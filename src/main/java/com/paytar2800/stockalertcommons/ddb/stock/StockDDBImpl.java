@@ -3,6 +3,7 @@ package com.paytar2800.stockalertcommons.ddb.stock;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
@@ -55,6 +56,32 @@ public class StockDDBImpl implements StockDAO {
         results.forEach(stockDataItem -> tickerList.add(stockDataItem.getTicker()));
 
         return new PaginatedItem<>(tickerList, nextToken);
+    }
+
+    @Override
+    public List<StockDataItem> getStockItemsForPriority(String priority, String exchange) {
+
+        StockDataItem stockDataItem = new StockDataItem();
+        stockDataItem.setPriority(priority);
+        stockDataItem.setExchange(exchange);
+
+        DynamoDBQueryExpression<StockDataItem> queryExpression =
+                new DynamoDBQueryExpression<StockDataItem>()
+                        .withHashKeyValues(stockDataItem)
+                        .withIndexName(StockDDBConstants.TABLE_UPDATE_PRIORITY_GSI_KEY)
+                        .withProjectionExpression(StockDDBConstants.TABLE_TICKER_KEY)
+                        .withConsistentRead(false);
+
+        PaginatedQueryList<StockDataItem> paginatedQueryList = dynamoDBMapper.query(StockDataItem.class, queryExpression);
+
+        List<StockDataItem> items = new ArrayList<>();
+
+        if (paginatedQueryList != null && !paginatedQueryList.isEmpty()) {
+            paginatedQueryList.loadAllResults();
+            items.addAll(paginatedQueryList);
+        }
+
+        return items;
     }
 
     @Override

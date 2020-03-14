@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 
 /**
  * Stock Table to store tickers used in the backend engine for checking alerts
@@ -47,4 +49,16 @@ public class StockDataItem {
         return new StockDataItemBuilder().ticker(ticker);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StockDataItem dataItem = (StockDataItem) o;
+        return ticker.equals(dataItem.ticker);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ticker);
+    }
 }
