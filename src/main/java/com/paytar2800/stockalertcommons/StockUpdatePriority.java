@@ -10,13 +10,13 @@ import java.util.List;
 
 public enum StockUpdatePriority {
 
+    //MC = Stands for Market Close
     P1(0.5),
     P2(1),
     P3(5),
     P4(10),
     H(60),
-    MC(480),   //Stands for Market Close
-    DAY(1440);
+    MC(960);
 
     private static StockUpdatePriority[] priorityArray = {P1, P2, P3, P4};
 
