@@ -18,6 +18,8 @@ public enum StockUpdatePriority {
     MC(480),   //Stands for Market Close
     DAY(1440);
 
+    private static StockUpdatePriority[] priorityArray = {P1, P2, P3, P4};
+
     private double maxTimeDelayInMin;
 
     StockUpdatePriority(double v) {
@@ -36,8 +38,7 @@ public enum StockUpdatePriority {
         return maxTimeDelayInMin > priority.maxTimeDelayInMin;
     }
 
-    public List<StockUpdatePriority> getRunningPriorityList(){
-        StockUpdatePriority[] priorityArray = {P1, P2, P3, P4};
+    public static List<StockUpdatePriority> getRunningPriorityList(){
         return Arrays.asList(priorityArray);
     }
 
