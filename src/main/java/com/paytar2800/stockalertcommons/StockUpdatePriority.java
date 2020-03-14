@@ -5,14 +5,18 @@ package com.paytar2800.stockalertcommons;
  *
  * */
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum StockUpdatePriority {
 
     P1(0.5),
     P2(1),
     P3(5),
     P4(10),
-    MC(60),
-    MAX(480);
+    H(60),
+    MC(480),   //Stands for Market Close
+    DAY(1440);
 
     private double maxTimeDelayInMin;
 
@@ -30,6 +34,11 @@ public enum StockUpdatePriority {
 
     public boolean isPriorityLowerThan(StockUpdatePriority priority) {
         return maxTimeDelayInMin > priority.maxTimeDelayInMin;
+    }
+
+    public List<StockUpdatePriority> getRunningPriorityList(){
+        StockUpdatePriority[] priorityArray = {P1, P2, P3, P4};
+        return Arrays.asList(priorityArray);
     }
 
 }

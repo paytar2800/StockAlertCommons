@@ -3,6 +3,7 @@ package com.paytar2800.stockalertcommons.ddb.stock.model;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants;
 import lombok.AllArgsConstructor;
@@ -32,8 +33,11 @@ public class StockDataItem {
 
     @DynamoDBIndexHashKey(attributeName = StockDDBConstants.TABLE_UPDATE_PRIORITY_KEY,
             globalSecondaryIndexName = StockDDBConstants.TABLE_UPDATE_PRIORITY_GSI_KEY)
-    @DynamoDBAttribute(attributeName = StockDDBConstants.TABLE_UPDATE_PRIORITY_KEY)
     private String priority;
+
+    @DynamoDBIndexRangeKey(attributeName = StockDDBConstants.TABLE_STOCK_EXCHANGE_KEY,
+            globalSecondaryIndexName = StockDDBConstants.TABLE_UPDATE_PRIORITY_GSI_KEY)
+    private String exchange;
 
     public StockDataItem(String ticker) {
         this.ticker = ticker;
