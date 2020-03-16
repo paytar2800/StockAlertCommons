@@ -24,7 +24,12 @@ public class StockData {
                 String ticker = fields[0];
                 String priority = fields[1];
                 Long alertCount = Long.parseLong(fields[2]);
-                String exchange = fields[3];
+
+                String exchange = null;
+
+                if(fields.length > 3){
+                    exchange = fields[3];
+                }
 
                 StockDataItem dataItem = StockDataItem.builder(ticker)
                         .priority(priority).alertCount(alertCount).exchange(exchange).build();

@@ -7,4 +7,5 @@ public class StockDDBConstants {
     public static final String TABLE_UPDATE_PRIORITY_KEY = "Priority";
     public static final String TABLE_STOCK_EXCHANGE_KEY = "Exchange";
     public static final String TABLE_UPDATE_PRIORITY_GSI_KEY = "PriorityIndex";
+    public static final String TABLE_STOCK_EXCHANGE_DEFAULT_VALUE = "DEF";
 }

@@ -1,6 +1,7 @@
 package com.paytar2800.stockalertcommons.ddb.stock;
 
 import com.paytar2800.stockalertcommons.ddb.DDBUtils;
+import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
 import org.junit.After;
@@ -43,13 +44,30 @@ public class StockDDBImplTest {
                 .collect(Collectors.toList());
     }
 
+    private List<StockDataItem> getStockDataItemList(String priority){
+        return stockDataItemList.stream()
+                .filter(stockDataItem -> stockDataItem.getPriority().equals(priority))
+                .collect(Collectors.toList());
+    }
+
     private void compareStockDataItems(List<StockDataItem> expected, List<StockDataItem> actual){
         assertEquals(expected.size(), actual.size());
         expected.forEach(expectedItem -> assertTrue(actual.contains(expectedItem)));
     }
 
+    private void checkIfTickersMatch(List<String> expected, List<StockDataItem> actual){
+        assertEquals(expected.size(), actual.size());
+        actual.forEach(stockDataItem -> assertTrue(expected.contains(stockDataItem.getTicker())));
+    }
+
     @Test
     public void getTickersForPriority() {
+        addItemsToDB();
+        String priority = "P1";
+        PaginatedItem<String, String> dataItems = stockDAO.getTickersForPriority(priority,null,null);
+        List<String> tickerList = dataItems.getCurrentItemList();
+
+        checkIfTickersMatch(tickerList, getStockDataItemList(priority));
     }
 
     @Test

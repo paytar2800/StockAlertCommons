@@ -23,6 +23,7 @@ import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.IAlertDBItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
+import com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.exceptions.DDBException;
 import lombok.NonNull;
@@ -173,7 +174,9 @@ public class AlertDDBImpl implements AlertDAO {
 
             //update the Stock's alert count in the Stock Data table.
             StockDataItem stockDataItem = StockDataItem.builder(alertDataItem.getTicker())
-                    .alertCount(1L).priority(StockUpdatePriority.P1.name()).build();
+                    .alertCount(1L).priority(StockUpdatePriority.P1.name())
+                    .exchange(StockDDBConstants.TABLE_STOCK_EXCHANGE_DEFAULT_VALUE)
+                    .build();
 
             transactionWriteRequest.addUpdate(stockDataItem);
 
