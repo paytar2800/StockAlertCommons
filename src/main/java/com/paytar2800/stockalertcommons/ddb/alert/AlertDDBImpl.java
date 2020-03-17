@@ -23,7 +23,6 @@ import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.IAlertDBItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
-import com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.exceptions.DDBException;
 import lombok.NonNull;
@@ -38,6 +37,7 @@ import java.util.Optional;
 
 import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.STOCK_TABLE_NAME;
 import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.TABLE_ALERT_COUNT_KEY;
+import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.TABLE_STOCK_EXCHANGE_DEFAULT_VALUE;
 
 public class AlertDDBImpl implements AlertDAO {
 
@@ -175,7 +175,7 @@ public class AlertDDBImpl implements AlertDAO {
             //update the Stock's alert count in the Stock Data table.
             StockDataItem stockDataItem = StockDataItem.builder(alertDataItem.getTicker())
                     .alertCount(1L).priority(StockUpdatePriority.P1.name())
-                    .exchange(StockDDBConstants.TABLE_STOCK_EXCHANGE_DEFAULT_VALUE)
+                    .exchange(alertDataItem.getExchange() == null ? TABLE_STOCK_EXCHANGE_DEFAULT_VALUE : alertDataItem.getExchange())
                     .build();
 
             transactionWriteRequest.addUpdate(stockDataItem);
