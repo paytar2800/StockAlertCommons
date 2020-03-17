@@ -18,6 +18,7 @@ public class APIParamConstants {
     public static final String API_TENDAY_PARAM = "10d";
     public static final String API_THREEMONTH_PARAM = "3M";
     public static final String API_ISNEW_ALERT_PARAM = "isNew";
+    public static final String API_EXCHANGE_PARAM = "exg";
 
     /*
      * UserAPI Params

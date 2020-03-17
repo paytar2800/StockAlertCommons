@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EXCHANGE_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISNEW_ALERT_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_NETPERCENTCHANGEALERT_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SIMPLEDAILYPERCENTALERT_PARAM;
@@ -74,6 +75,10 @@ public class AlertDataItem implements IAlertDBItem {
     public boolean isNewAlert() {
         return isNewAlert;
     }
+
+    @SerializedName(API_EXCHANGE_PARAM)
+    @DynamoDBIgnore
+    public String exchange;
 
     public static AlertDataItemBuilder builder(String ticker, String userId, String watchListId) {
         return new AlertDataItemBuilder()
