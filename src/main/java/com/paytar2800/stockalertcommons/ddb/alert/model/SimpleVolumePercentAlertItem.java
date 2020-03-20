@@ -37,7 +37,6 @@ public class SimpleVolumePercentAlertItem implements IAlertDBItem{
         return isItemEmpty(tenDayVolPercent) && isItemEmpty(threeMonthVolPercent);
     }
 
-    @DynamoDBIgnore
     @Override
     public Long getTriggerTime() {
         return lastTriggeredTime;

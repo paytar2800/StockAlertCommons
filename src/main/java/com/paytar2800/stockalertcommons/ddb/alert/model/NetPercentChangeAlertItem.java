@@ -42,7 +42,6 @@ public class NetPercentChangeAlertItem implements IAlertDBItem {
         return isItemEmpty(lowPercent) && isItemEmpty(highPercent);
     }
 
-    @DynamoDBIgnore
     @Override
     public Long getTriggerTime() {
         return lastTriggeredTime;
