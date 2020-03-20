@@ -29,17 +29,12 @@ public class SimplePriceAlertItem implements IAlertDBItem {
     private Double highPrice;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
-    private transient Long lastTriggeredTime;
+    private transient Long triggerTime;
 
     @DynamoDBIgnore
     @Override
     public boolean isEmpty() {
         return isItemEmpty(lowPrice) && isItemEmpty(highPrice);
-    }
-
-    @Override
-    public Long getTriggerTime() {
-        return lastTriggeredTime;
     }
 
     @DynamoDBIgnore

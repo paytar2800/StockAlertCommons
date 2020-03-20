@@ -34,17 +34,12 @@ public class NetPercentChangeAlertItem implements IAlertDBItem {
     private Double basePrice;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
-    private transient Long lastTriggeredTime;
+    private transient Long triggerTime;
 
     @DynamoDBIgnore
     @Override
     public boolean isEmpty() {
         return isItemEmpty(lowPercent) && isItemEmpty(highPercent);
-    }
-
-    @Override
-    public Long getTriggerTime() {
-        return lastTriggeredTime;
     }
 
     @DynamoDBIgnore

@@ -29,17 +29,12 @@ public class SimpleVolumePercentAlertItem implements IAlertDBItem{
     private Double threeMonthVolPercent;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
-    private transient Long lastTriggeredTime;
+    private transient Long triggerTime;
 
     @DynamoDBIgnore
     @Override
     public boolean isEmpty() {
         return isItemEmpty(tenDayVolPercent) && isItemEmpty(threeMonthVolPercent);
-    }
-
-    @Override
-    public Long getTriggerTime() {
-        return lastTriggeredTime;
     }
 
     @DynamoDBIgnore

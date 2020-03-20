@@ -70,7 +70,7 @@ public class AlertDDBImplTest {
             alertDataItem.setSimpleDailyPercentAlertItem(
                     SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
             alertDataItem.setSimpleVolumePercentAlertItem(
-                    SimpleVolumePercentAlertItem.builder().lastTriggeredTime(22L).build());
+                    SimpleVolumePercentAlertItem.builder().triggerTime(22L).build());
             alertDataItem.setNetPercentChangeAlertItem(
                     NetPercentChangeAlertItem.builder().highPercent(22.0).build()
             );
@@ -89,7 +89,7 @@ public class AlertDDBImplTest {
         alertDataItem.setSimpleDailyPercentAlertItem(
                 SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
         alertDataItem.setSimpleVolumePercentAlertItem(
-                SimpleVolumePercentAlertItem.builder().lastTriggeredTime(22L).build());
+                SimpleVolumePercentAlertItem.builder().triggerTime(22L).build());
         alertDataItem.setNetPercentChangeAlertItem(
                 NetPercentChangeAlertItem.builder().highPercent(22.0).build());
 
@@ -99,7 +99,7 @@ public class AlertDDBImplTest {
                 alertDataItem.getUserWatchlistId().getUserId(),alertDataItem.getUserWatchlistId().getWatchListId()).build();
 
         item.setSimplePriceAlertItem(
-                SimplePriceAlertItem.builder().lastTriggeredTime(1950L).build());
+                SimplePriceAlertItem.builder().triggerTime(1950L).build());
 
         //LocalDDBServer.getCustomMapper().updateAlertItemTriggerTime(item);
         AlertDataItem dataItem = (AlertDataItem) LocalDDBServer.loadItemFromDB(alertDataItem);
