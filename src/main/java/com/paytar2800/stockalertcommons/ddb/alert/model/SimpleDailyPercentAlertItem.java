@@ -40,6 +40,6 @@ public class SimpleDailyPercentAlertItem implements IAlertDBItem{
     @DynamoDBIgnore
     @Override
     public String getDBKeyName() {
-        return AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY;
+        return AlertDDBConstants.ALERT_SIMPLEDAILYPERCENTALERT_KEY;
     }
 }
