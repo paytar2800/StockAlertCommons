@@ -65,14 +65,21 @@ public class StockDDBImpl implements StockDAO {
         stockDataItem.setPriority(priority);
         stockDataItem.setExchange(exchange);
 
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":priority", new AttributeValue().withS(priority));
+        eav.put(":exchange",new AttributeValue().withS(exchange));
+
         DynamoDBQueryExpression<StockDataItem> queryExpression =
                 new DynamoDBQueryExpression<StockDataItem>()
-                        .withHashKeyValues(stockDataItem)
+                        .withKeyConditionExpression(StockDDBConstants.TABLE_UPDATE_PRIORITY_KEY + " = :priority and " +
+                                StockDDBConstants.TABLE_STOCK_EXCHANGE_KEY+ " = :exchange")
+                        .withExpressionAttributeValues(eav)
                         .withIndexName(StockDDBConstants.TABLE_UPDATE_PRIORITY_GSI_KEY)
                         .withProjectionExpression(StockDDBConstants.TABLE_TICKER_KEY)
                         .withConsistentRead(false);
 
-        PaginatedQueryList<StockDataItem> paginatedQueryList = dynamoDBMapper.query(StockDataItem.class, queryExpression);
+        PaginatedQueryList<StockDataItem> paginatedQueryList = dynamoDBMapper.query
+                (StockDataItem.class, queryExpression);
 
         List<StockDataItem> items = new ArrayList<>();
 

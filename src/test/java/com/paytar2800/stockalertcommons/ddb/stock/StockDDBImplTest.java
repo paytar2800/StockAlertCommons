@@ -1,6 +1,5 @@
 package com.paytar2800.stockalertcommons.ddb.stock;
 
-import com.paytar2800.stockalertcommons.ddb.DDBUtils;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;

@@ -175,7 +175,8 @@ public class AlertDDBImpl implements AlertDAO {
             //update the Stock's alert count in the Stock Data table.
             StockDataItem stockDataItem = StockDataItem.builder(alertDataItem.getTicker())
                     .alertCount(1L).priority(StockUpdatePriority.P1.name())
-                    .exchange(alertDataItem.getExchange() == null ? TABLE_STOCK_EXCHANGE_DEFAULT_VALUE : alertDataItem.getExchange())
+                    .exchange(alertDataItem.getExchange() == null ?
+                            TABLE_STOCK_EXCHANGE_DEFAULT_VALUE : alertDataItem.getExchange())
                     .build();
 
             transactionWriteRequest.addUpdate(stockDataItem);
