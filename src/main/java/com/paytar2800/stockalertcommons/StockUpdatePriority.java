@@ -18,7 +18,7 @@ public enum StockUpdatePriority {
     H(60),
     MC(960);
 
-    private static StockUpdatePriority[] priorityArray = {P1, P2, P3, P4};
+    private static StockUpdatePriority[] priorityArray = {P1};
 
     private double maxTimeDelayInMin;
 
