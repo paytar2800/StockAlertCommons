@@ -60,11 +60,6 @@ public class StockDDBImpl implements StockDAO {
 
     @Override
     public List<StockDataItem> getStockItemsForPriority(String priority, String exchange) {
-
-        StockDataItem stockDataItem = new StockDataItem();
-        stockDataItem.setPriority(priority);
-        stockDataItem.setExchange(exchange);
-
         Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
         eav.put(":priority", new AttributeValue().withS(priority));
         eav.put(":exchange",new AttributeValue().withS(exchange));
