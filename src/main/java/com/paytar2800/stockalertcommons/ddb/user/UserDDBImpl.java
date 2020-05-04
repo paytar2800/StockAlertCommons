@@ -4,11 +4,15 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
+import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import lombok.NonNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -87,8 +91,50 @@ public class UserDDBImpl implements UserDAO {
         return Optional.ofNullable(dynamoDBMapper.load(UserDataItem.class, userId));
     }
 
+    @Override
+    public PaginatedItem<UserDataItem, String> getLatestUpdatedUsers(String nextPageToken,
+                                                                     Integer maxItemsPerPage) {
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        String partitonKey = ":val1";
+        eav.put(partitonKey, new AttributeValue().withN("1"));
+
+        DynamoDBQueryExpression<UserDataItem> queryExpression =
+                new DynamoDBQueryExpression<UserDataItem>()
+                        .withKeyConditionExpression(
+                                UserDDBConstants.TABLE_HAS_CHANGED_KEY + " = " + partitonKey)
+                        .withExpressionAttributeValues(eav)
+                        .withIndexName(UserDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
+                        .withExclusiveStartKey(unserializePaginationToken(nextPageToken))
+                        .withProjectionExpression(UserDDBConstants.TABLE_USERID_KEY + ","
+                                +UserDDBConstants.TABLE_ALERTSNOOZETIME_KEY+","
+                                +UserDDBConstants.TABLE_DEVICE_TOKEN_KEY+","
+                                +UserDDBConstants.TABLE_ISALERTENABLED_KEY)
+                        .withLimit(maxItemsPerPage);
+
+        QueryResultPage<UserDataItem> queryResultPage = dynamoDBMapper.queryPage(
+                UserDataItem.class, queryExpression);
+
+        String nextToken = serializePaginationToken(queryResultPage.getLastEvaluatedKey());
+
+        List<UserDataItem> results = queryResultPage.getResults();
+
+        return new PaginatedItem<>(results, nextToken);
+    }
+
     public void deleteItem(@NonNull UserDataItem dataItem) {
         UserDataItem item = UserDataItem.builder().userId(dataItem.getUserId()).build();
         dynamoDBMapper.delete(item);
     }
+
+    private String serializePaginationToken(Map<String, AttributeValue> lastKeyMap) {
+        NextTokenSerializer nextTokenSerializer = NextTokenSerializer.getInstance();
+        return nextTokenSerializer.serializeLastEvaluatedKey(lastKeyMap);
+    }
+
+    private Map<String, AttributeValue> unserializePaginationToken(String token) {
+        NextTokenSerializer nextTokenSerializer = NextTokenSerializer.getInstance();
+        return nextTokenSerializer.deserializeExclusiveStartKey(token);
+    }
+
 }
