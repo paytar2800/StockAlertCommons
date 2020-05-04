@@ -40,6 +40,13 @@ public class UserDDBImpl implements UserDAO {
         dynamoDBMapper.save(userDataItem, dynamoDBMapperConfig);
     }
 
+    /*
+       This overwrites items instead of updating non-null attributes only.
+     */
+    public List<DynamoDBMapper.FailedBatch> batchPutItems(@NonNull List<UserDataItem> userDataItemList) {
+        return dynamoDBMapper.batchSave(userDataItemList);
+    }
+
 
     //getItem using emailId as GSI key
     public Optional<UserDataItem> getItemUsingEmail(@NonNull String emailId) {
@@ -108,6 +115,7 @@ public class UserDDBImpl implements UserDAO {
                         .withIndexName(UserDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
                         .withExclusiveStartKey(unserializePaginationToken(nextPageToken))
                         .withProjectionExpression(UserDDBConstants.TABLE_USERID_KEY)
+                        .withConsistentRead(false)
                         .withLimit(maxItemsPerPage);
 
         QueryResultPage<UserDataItem> queryResultPage = dynamoDBMapper.queryPage(

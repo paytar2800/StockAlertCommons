@@ -1,11 +1,13 @@
 package com.paytar2800.stockalertcommons.ddb.user;
 
+import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +15,9 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class UserDDBImplTest {
 
@@ -117,10 +121,37 @@ public class UserDDBImplTest {
         });
     }
 
+
     @Test
-    public void test() {
-        UserDataItem dataItem = UserDataItem.builder().emailId("tarun").userId("tar").alertSnoozeTimeSeconds(0).build();
-        System.out.println(dataItem.toJson().toString());
+    public void testBatchSaveItem(){
+        itemList.forEach(this::addItemToDB);
+
+        PaginatedItem<String, String> paginatedItem = userDAO.getLatestUpdatedUsers(
+                null, null);
+
+        List<String> userIdList = paginatedItem.getCurrentItemList();
+
+        List<UserDataItem> itemList = new ArrayList<>();
+
+        userIdList.forEach(userId -> {
+            UserDataItem dataItem = UserDataItem.builder().userId(userId).build();
+            UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(dataItem);
+            assertTrue(actualItem.getHasChanged());
+            dataItem.setHasChanged(false);
+            userDAO.updateItem(dataItem);
+        });
+
+
+        //Verify that the flag has turned off
+        userIdList.forEach(userId -> {
+            UserDataItem dataItem = UserDataItem.builder().userId(userId).build();
+            UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(dataItem);
+            assertFalse(actualItem.getHasChanged());
+            assertNotNull(actualItem.getEmailId());
+            assertNotNull(actualItem.getDeviceToken());
+            assertNotNull(actualItem.getAlertSnoozeTimeSeconds());
+            assertNotNull(actualItem.getIsAlertEnabled());
+        });
     }
 
 }
