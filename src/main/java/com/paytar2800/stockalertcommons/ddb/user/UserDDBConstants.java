@@ -10,6 +10,8 @@ public class UserDDBConstants {
     public static final String TABLE_ISALERTENABLED_KEY = "AlertEnabled";
     public static final String TABLE_SUB_STATUS_KEY = "SubStatus";
     public static final String TABLE_DEVICE_TOKEN_KEY = "DeviceToken";
+    public static final String TABLE_HAS_CHANGED_KEY = "Changed";
+    public static final String TABLE_HAS_CHANGED_GSI_KEY = "ChangedIndex";
 
     public static final int UNSUBSCRIBED_CODE = -1;
     public static final int PREMIUM_SUBSCRIBED_CODE = 1;
