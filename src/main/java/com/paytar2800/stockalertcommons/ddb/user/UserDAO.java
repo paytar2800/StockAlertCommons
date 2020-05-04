@@ -15,7 +15,7 @@ public interface UserDAO {
     /*
      * Gets paginated item list of alerts for given ticker.
      */
-    PaginatedItem<UserDataItem, String> getLatestUpdatedUsers(String nextPageToken,
+    PaginatedItem<String, String> getLatestUpdatedUsers(String nextPageToken,
                                                               Integer maxItemsPerPage);
 
     void updateItem(@NonNull UserDataItem userDataItem);

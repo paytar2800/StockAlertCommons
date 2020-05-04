@@ -11,6 +11,7 @@ import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import lombok.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class UserDDBImpl implements UserDAO {
     }
 
     @Override
-    public PaginatedItem<UserDataItem, String> getLatestUpdatedUsers(String nextPageToken,
+    public PaginatedItem<String, String> getLatestUpdatedUsers(String nextPageToken,
                                                                      Integer maxItemsPerPage) {
 
         Map<String, AttributeValue> eav = new HashMap<>();
@@ -106,10 +107,7 @@ public class UserDDBImpl implements UserDAO {
                         .withExpressionAttributeValues(eav)
                         .withIndexName(UserDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
                         .withExclusiveStartKey(unserializePaginationToken(nextPageToken))
-                        .withProjectionExpression(UserDDBConstants.TABLE_USERID_KEY + ","
-                                +UserDDBConstants.TABLE_ALERTSNOOZETIME_KEY+","
-                                +UserDDBConstants.TABLE_DEVICE_TOKEN_KEY+","
-                                +UserDDBConstants.TABLE_ISALERTENABLED_KEY)
+                        .withProjectionExpression(UserDDBConstants.TABLE_USERID_KEY)
                         .withLimit(maxItemsPerPage);
 
         QueryResultPage<UserDataItem> queryResultPage = dynamoDBMapper.queryPage(
@@ -119,7 +117,13 @@ public class UserDDBImpl implements UserDAO {
 
         List<UserDataItem> results = queryResultPage.getResults();
 
-        return new PaginatedItem<>(results, nextToken);
+        List<String> userIdList = new ArrayList<>();
+
+        if(results != null){
+            results.forEach(userDataItem -> userIdList.add(userDataItem.getUserId()));
+        }
+
+        return new PaginatedItem<>(userIdList, nextToken);
     }
 
     public void deleteItem(@NonNull UserDataItem dataItem) {
