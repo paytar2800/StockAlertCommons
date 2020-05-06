@@ -181,8 +181,11 @@ public class AlertDDBImpl implements AlertDAO {
 
             transactionWriteRequest.addUpdate(stockDataItem);
 
+            DynamoDBMapperConfig dynamoDBMapperConfig = AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
+
             try {
-                customDynamoDBMapper.transactionWriteForAlertAndStockTable(transactionWriteRequest, null, true);
+                customDynamoDBMapper.transactionWriteForAlertAndStockTable(transactionWriteRequest, dynamoDBMapperConfig
+                        , true);
             } catch (TransactionCanceledException e) {
                 logger.error(String.format("putNewAlert Transaction failed for = %s,%s due to reason = %s"
                         , alertDataItem.getTicker(), alertDataItem.getUserWatchlistId(), e.getCancellationReasons()));

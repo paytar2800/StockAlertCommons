@@ -122,12 +122,16 @@ public class CustomDynamoDBMapper extends DynamoDBMapper {
             TransactWriteItem writeItem = generateTransactWriteItem(writeOperation, inMemoryUpdates, finalConfig);
             if (writeOperation.getObject() instanceof StockDataItem && writeItem.getUpdate() != null) {
                 String updateExpression = writeItem.getUpdate().getUpdateExpression();
-                String identifier = getIdentifier(writeItem.getUpdate().getExpressionAttributeNames(), TABLE_ALERT_COUNT_KEY);
-                if (updateExpression != null && identifier != null) {
-                    updateExpression = updateExpression.replace(identifier + " = ",
-                            identifier + " = " +
-                                    " if_not_exists(" + identifier + ", :initial)" +
+
+                String identifierForAlertCount = getIdentifier(writeItem.getUpdate().getExpressionAttributeNames(),
+                        TABLE_ALERT_COUNT_KEY);
+
+                if (updateExpression != null && identifierForAlertCount != null) {
+
+                    updateExpression = updateExpression.replace(identifierForAlertCount + " = ",
+                            identifierForAlertCount + " = " + " if_not_exists(" + identifierForAlertCount + ", :initial)" +
                                     (shouldIncreaseAlertCount ? " + " : "-"));
+
                     writeItem.getUpdate().setUpdateExpression(updateExpression);
                     writeItem.getUpdate().getExpressionAttributeValues().put(":initial", new AttributeValue().withN("0"));
                 }
@@ -348,7 +352,7 @@ public class CustomDynamoDBMapper extends DynamoDBMapper {
                 break;
             case Update:
                 transactWriteItem.setUpdate(
-                        generateUpdate(model, tableName, attributeValueMap, returnValuesOnConditionCheckFailure, writeExpression));
+                        generateUpdate(model, tableName, attributeValueMap, returnValuesOnConditionCheckFailure, writeExpression, config));
                 break;
             case ConditionCheck:
                 transactWriteItem.setConditionCheck(
@@ -393,7 +397,9 @@ public class CustomDynamoDBMapper extends DynamoDBMapper {
                                   String tableName,
                                   Map<String, AttributeValue> attributeValueMap,
                                   ReturnValuesOnConditionCheckFailure returnValuesOnConditionCheckFailure,
-                                  DynamoDBTransactionWriteExpression writeExpression) {
+                                  DynamoDBTransactionWriteExpression writeExpression,
+                                  DynamoDBMapperConfig dynamoDBMapperConfig) {
+
         Update update = new Update();
         Map<String, String> expressionAttributeNamesMap = new HashMap<String, String>();
         Map<String, AttributeValue> expressionsAttributeValuesMap = new HashMap<String, AttributeValue>();
@@ -424,6 +430,12 @@ public class CustomDynamoDBMapper extends DynamoDBMapper {
             } else if (attributeValueMap.get(field.name()) != null) {
                 nonKeyNonNullAttributeValueMap.put(field.name(), attributeValueMap.get(field.name()));
             } else {
+                if (dynamoDBMapperConfig.getSaveBehavior() ==
+                        DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES ||
+                        dynamoDBMapperConfig.getSaveBehavior() == DynamoDBMapperConfig.SaveBehavior.APPEND_SET) {
+                    //Dont add in nullvaluedMap since we have to skip these attributes
+                    continue;
+                }
                 nullValuedNonKeyAttributeNames.add(field.name());
             }
         }

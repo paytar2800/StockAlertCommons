@@ -79,6 +79,11 @@ public class AlertDDBImplTest {
             assertTrue(dataItem.isPresent());
             assertEquals(alertDataItem, dataItem.get());
         });
+
+        alertDataItemList.forEach(alertDataItem -> {
+            StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
+            assertEquals(stockCountMap.get(stockItem.getTicker()), stockItem.getAlertCount());
+        });
     }
 
     @Test
@@ -93,7 +98,7 @@ public class AlertDDBImplTest {
         alertDataItem.setNetPercentChangeAlertItem(
                 NetPercentChangeAlertItem.builder().highPercent(22.0).build());
 
-        LocalDDBServer.addItemToDB(alertDataItem);
+        alertDAO.updateAlert(alertDataItem);
 
         AlertDataItem item = AlertDataItem.builder(alertDataItem.getTicker(),
                 alertDataItem.getUserWatchlistId().getUserId(),alertDataItem.getUserWatchlistId().getWatchListId()).build();
@@ -101,9 +106,11 @@ public class AlertDDBImplTest {
         item.setSimplePriceAlertItem(
                 SimplePriceAlertItem.builder().triggerTime(1950L).build());
 
-        //LocalDDBServer.getCustomMapper().updateAlertItemTriggerTime(item);
         AlertDataItem dataItem = (AlertDataItem) LocalDDBServer.loadItemFromDB(alertDataItem);
         assertNotNull(dataItem);
+
+        StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
+        assertEquals(new Long(1) , stockItem.getAlertCount());
     }
 
 
@@ -111,14 +118,17 @@ public class AlertDDBImplTest {
     public void deleteStock() {
         putNewAlert();
         alertDataItemList.forEach(alertDataItem -> {
-            StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
             alertDAO.deleteAlert(alertDataItem, false);
             long count = stockCountMap.get(alertDataItem.getTicker()) - 1;
             stockCountMap.put(alertDataItem.getTicker(), count);
-            assertEquals(count, stockItem.getAlertCount() - 1L);
+            StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
             if (count == 0) {
                 stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
                 assertNull(stockItem);
+            }else{
+                assertEquals(new Long(count), stockItem.getAlertCount());
+                assertNotNull(stockItem.getExchange());
+                assertNotNull(stockItem.getPriority());
             }
         });
     }
@@ -136,6 +146,10 @@ public class AlertDDBImplTest {
             tickerList.forEach(ticker -> {
                 StockDataItem dataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(ticker));
                 assertEquals(stockCountMap.get(ticker), dataItem == null ? dataItem : dataItem.getAlertCount());
+                if(dataItem != null){
+                    assertNotNull(dataItem.getExchange());
+                    assertNotNull(dataItem.getPriority());
+                }
             });
         });
     }
@@ -168,6 +182,10 @@ public class AlertDDBImplTest {
             tickerList.forEach(ticker -> {
                 StockDataItem dataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(ticker));
                 assertEquals(stockCountMap.get(ticker), dataItem == null ? dataItem : dataItem.getAlertCount());
+                if(dataItem != null){
+                    assertNotNull(dataItem.getExchange());
+                    assertNotNull(dataItem.getPriority());
+                }
             });
         }
     }
@@ -191,22 +209,33 @@ public class AlertDDBImplTest {
     @Test
     public void test_exceptionBehaviour() {
         alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
-        StockDataItem dataItem = StockDataItem.builder(alertDataItemList.get(0).getTicker()).alertCount(1L).build();
+        StockDataItem dataItem = StockDataItem.builder(alertDataItemList.get(0).getTicker())
+                .alertCount(1L)
+                .exchange("DEF")
+                .priority("P1")
+                .build();
         LocalDDBServer.getDynamoDBMapper().save(dataItem);
 
         AlertDataItem alertDataItem = AlertDataItem.builder("ADBE", "tarun", "w1").build();
+        StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
 
         alertDAO.deleteAlert(alertDataItem, false);
         long count = stockCountMap.get(alertDataItem.getTicker()) - 1;
         stockCountMap.put(alertDataItem.getTicker(), count);
-        StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
+        stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
         assertEquals(Long.valueOf(count), (stockItem.getAlertCount()));
+        assertNotNull(stockItem.getExchange());
+        assertNotNull(stockItem.getPriority());
     }
 
     @Test
     public void Test_exceptionBehaviour_ForWatchListDelete() {
         alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
-        StockDataItem dataItem = StockDataItem.builder(alertDataItemList.get(0).getTicker()).alertCount(1L).build();
+        StockDataItem dataItem = StockDataItem.builder(alertDataItemList.get(0).getTicker())
+                                                    .alertCount(1L)
+                                                    .exchange("DEF")
+                                                    .priority("P1")
+                                                    .build();
         LocalDDBServer.getDynamoDBMapper().save(dataItem);
 
         AlertDataItem alertDataItem = AlertDataItem.builder("ADBE", "tarun", "w1").build();
@@ -217,6 +246,7 @@ public class AlertDDBImplTest {
         stockCountMap.put(alertDataItem.getTicker(), count);
         StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
         assertEquals(Long.valueOf(count), (stockItem.getAlertCount()));
+        assertNotNull(stockItem.getExchange());
+        assertNotNull(stockItem.getPriority());
     }
-
 }

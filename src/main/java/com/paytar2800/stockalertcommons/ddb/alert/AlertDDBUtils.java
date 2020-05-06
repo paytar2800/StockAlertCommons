@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.APPEND_SET;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES;
 import static com.amazonaws.services.dynamodbv2.model.Select.COUNT;
 import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.TABLE_ALERT_COUNT_KEY;
 
@@ -54,7 +54,7 @@ class AlertDDBUtils {
 
     static DynamoDBMapperConfig getDynamoDBMapperConfigForPartialUpdate() {
         return DynamoDBMapperConfig.builder()
-                .withSaveBehavior(APPEND_SET)
+                .withSaveBehavior(UPDATE_SKIP_NULL_ATTRIBUTES)
                 .build();
     }
 
