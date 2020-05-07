@@ -7,10 +7,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class StockDDBImplTest {
@@ -67,6 +69,33 @@ public class StockDDBImplTest {
         List<String> tickerList = dataItems.getCurrentItemList();
 
         checkIfTickersMatch(tickerList, getStockDataItemList(priority));
+    }
+
+    @Test
+    public void getTickersForPriorityWIthExtraAttributes() {
+        addItemsToDB();
+        String priority = "P1";
+        List<String> projectionList = new ArrayList<>();
+        projectionList.add(StockDDBConstants.TABLE_TICKER_KEY);
+        projectionList.add(StockDDBConstants.TABLE_STOCK_EXCHANGE_KEY);
+        projectionList.add(StockDDBConstants.TABLE_ALERT_COUNT_KEY);
+
+        PaginatedItem<StockDataItem, String> dataItems = stockDAO.getStockDataItemsForPriority(priority,
+                projectionList,null,null);
+
+        List<StockDataItem> stockItems = dataItems.getCurrentItemList();
+        List<StockDataItem> actualItems = getStockDataItemList(priority);
+
+        stockItems.forEach(stockItem -> {
+            int index = actualItems.indexOf(stockItem);
+            StockDataItem actual = actualItems.get(index);
+
+            assertEquals(actual.getTicker(), stockItem.getTicker());
+            assertEquals(actual.getExchange(), stockItem.getExchange());
+            assertEquals(actual.getAlertCount(), stockItem.getAlertCount());
+            assertNull(stockItem.getPriority());
+        });
+
     }
 
     @Test
