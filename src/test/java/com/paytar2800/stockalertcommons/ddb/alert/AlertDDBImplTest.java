@@ -249,4 +249,42 @@ public class AlertDDBImplTest {
         assertNotNull(stockItem.getExchange());
         assertNotNull(stockItem.getPriority());
     }
+
+    @Test
+    public void Test_UpdateAlertTriggeredItem() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+
+        NetPercentChangeAlertItem netPercentChangeAlertItem = NetPercentChangeAlertItem.builder()
+                .basePrice(30d)
+                .highPercent(2d)
+                .build();
+
+        alertDataItem.setNetPercentChangeAlertItem(netPercentChangeAlertItem);
+
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        AlertDataItem newAlertDataItem = alertDAO.getAlert(alertDataItem).get();
+
+        assertEquals(newAlertDataItem, alertDataItem);
+
+        assertNull(newAlertDataItem.getNetPercentChangeAlertItem().getTriggerTime());
+
+        NetPercentChangeAlertItem netPercentChangeAlertItemWithTriggerTime = NetPercentChangeAlertItem.builder()
+                .triggerTime(100L)
+                .build();
+
+        alertDataItem.setNetPercentChangeAlertItem(netPercentChangeAlertItemWithTriggerTime);
+
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        newAlertDataItem = alertDAO.getAlert(alertDataItem).get();
+
+        assertEquals(newAlertDataItem.getNetPercentChangeAlertItem().getTriggerTime(), new Long(100L));
+
+        alertDAO.deleteAlert(alertDataItem, false);
+
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.paytar2800.stockalertcommons.ddb.util;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -62,6 +63,7 @@ public class LocalDDBServer {
 
     private static void connectToDB() {
         dynamoDB = AmazonDynamoDBClientBuilder.standard()
+                .withCredentials(new ProfileCredentialsProvider("paytar"))
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(SERVICE_ENDPOINT, SIGNING_REGION))
                 .build();
         dynamoDBMapper = new DynamoDBMapper(dynamoDB);

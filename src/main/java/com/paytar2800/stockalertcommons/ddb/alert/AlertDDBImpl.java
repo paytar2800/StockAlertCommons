@@ -77,7 +77,12 @@ public class AlertDDBImpl implements AlertDAO {
 
     @Override
     public void updateAlertTriggerTimeOnly(AlertDataItem alertDataItem) {
-        updateAlertItemTriggerTime(alertDataItem);
+        try {
+            updateAlertItemTriggerTime(alertDataItem);
+        }catch (ConditionalCheckFailedException e){
+            //ignore this since alert does not exists as user might have deleted it.
+        }
+
     }
 
     private String serializePaginationToken(Map<String, AttributeValue> lastKeyMap) {
@@ -116,6 +121,8 @@ public class AlertDDBImpl implements AlertDAO {
         }
 
         request.setExpressionAttributeValues(attributeValues);
+        request.setConditionExpression("attribute_exists(" + AlertDDBConstants.ALERT_TICKER_KEY + ") AND " +
+                "attribute_exists(" + AlertDDBConstants.ALERT_USERWATCHLISTID_KEY + ")");
 
         customDynamoDBMapper.updateDBItem(request);
     }
