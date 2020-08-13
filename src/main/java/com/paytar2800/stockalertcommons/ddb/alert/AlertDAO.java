@@ -51,4 +51,8 @@ public interface AlertDAO {
      */
     void updateAlertTriggerTimeOnly(AlertDataItem alertDataItem);
 
+
+    PaginatedItem<AlertDataItem, String> getLatestUpdatedUsers(String nextPageToken,
+                                                               Integer maxItemsPerPage);
+
 }

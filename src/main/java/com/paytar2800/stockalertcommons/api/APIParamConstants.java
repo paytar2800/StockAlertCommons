@@ -26,6 +26,7 @@ public class APIParamConstants {
     public static final String API_EMAIL_ID_PARAM = "emailId";
     public static final String API_ALERTSNOOZETIME_PARAM = "snoozeTime";
     public static final String API_ISALERTENABLED_PARAM = "enableAlert";
+    public static final String API_ISEXTENDEDHOURSENABLED_PARAM = "extendHour";
     public static final String API_SUB_STATUS_PARAM = "subStatus";
     public static final String API_DEVICE_TOKEN = "device";
 

@@ -82,7 +82,6 @@ public class AlertDDBImpl implements AlertDAO {
         }catch (ConditionalCheckFailedException e){
             //ignore this since alert does not exists as user might have deleted it.
         }
-
     }
 
     private String serializePaginationToken(Map<String, AttributeValue> lastKeyMap) {
@@ -456,6 +455,36 @@ public class AlertDDBImpl implements AlertDAO {
         if (failedBatches != null && !failedBatches.isEmpty()) {
             throw new DDBException("User deletion failed for with failed batch = " + failedBatches);
         }
+    }
+
+    @Override
+    public PaginatedItem<AlertDataItem, String> getLatestUpdatedUsers(String nextPageToken,
+                                                               Integer maxItemsPerPage) {
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        String partitonKey = ":val1";
+        eav.put(partitonKey, new AttributeValue().withN("1"));
+
+        DynamoDBQueryExpression<AlertDataItem> queryExpression =
+                new DynamoDBQueryExpression<AlertDataItem>()
+                        .withKeyConditionExpression(
+                                AlertDDBConstants.TABLE_HAS_CHANGED_KEY + " = " + partitonKey)
+                        .withExpressionAttributeValues(eav)
+                        .withIndexName(AlertDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
+                        .withExclusiveStartKey(unserializePaginationToken(nextPageToken))
+                        .withProjectionExpression(AlertDDBConstants.ALERT_TICKER_KEY + "," +
+                                AlertDDBConstants.ALERT_USERWATCHLISTID_KEY)
+                        .withConsistentRead(false)
+                        .withLimit(maxItemsPerPage);
+
+        QueryResultPage<AlertDataItem> queryResultPage = customDynamoDBMapper.queryPage(
+                AlertDataItem.class, queryExpression);
+
+        String nextToken = serializePaginationToken(queryResultPage.getLastEvaluatedKey());
+
+        List<AlertDataItem> results = queryResultPage.getResults();
+
+        return new PaginatedItem<>(results, nextToken);
     }
 
 }

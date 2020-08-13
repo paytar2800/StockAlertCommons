@@ -18,6 +18,7 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ALERTSN
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_TOKEN;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EMAIL_ID_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISALERTENABLED_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISEXTENDEDHOURSENABLED_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SUB_STATUS_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_USER_ID_PARAM;
 
@@ -50,6 +51,10 @@ public class UserDataItem {
     @SerializedName(API_ISALERTENABLED_PARAM)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_ISALERTENABLED_KEY)
     private Boolean isAlertEnabled;
+
+    @SerializedName(API_ISEXTENDEDHOURSENABLED_PARAM)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_ISEXTENDEDHOURSENABLED_KEY)
+    private Boolean isExtendedAlertsEnabled;
 
     @SerializedName(API_SUB_STATUS_PARAM)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_SUB_STATUS_KEY)

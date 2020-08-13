@@ -1,5 +1,6 @@
 package com.paytar2800.stockalertcommons.ddb.alert;
 
+import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.NetPercentChangeAlertItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.SimpleDailyPercentAlertItem;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -87,7 +89,7 @@ public class AlertDDBImplTest {
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         AlertDataItem alertDataItem = alertDataItemList.get(0);
         alertDataItem.setSimplePriceAlertItem(
                 SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0).build());
@@ -101,7 +103,7 @@ public class AlertDDBImplTest {
         alertDAO.updateAlert(alertDataItem);
 
         AlertDataItem item = AlertDataItem.builder(alertDataItem.getTicker(),
-                alertDataItem.getUserWatchlistId().getUserId(),alertDataItem.getUserWatchlistId().getWatchListId()).build();
+                alertDataItem.getUserWatchlistId().getUserId(), alertDataItem.getUserWatchlistId().getWatchListId()).build();
 
         item.setSimplePriceAlertItem(
                 SimplePriceAlertItem.builder().triggerTime(1950L).build());
@@ -110,7 +112,7 @@ public class AlertDDBImplTest {
         assertNotNull(dataItem);
 
         StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
-        assertEquals(new Long(1) , stockItem.getAlertCount());
+        assertEquals(new Long(1), stockItem.getAlertCount());
     }
 
 
@@ -125,7 +127,7 @@ public class AlertDDBImplTest {
             if (count == 0) {
                 stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
                 assertNull(stockItem);
-            }else{
+            } else {
                 assertEquals(new Long(count), stockItem.getAlertCount());
                 assertNotNull(stockItem.getExchange());
                 assertNotNull(stockItem.getPriority());
@@ -146,7 +148,7 @@ public class AlertDDBImplTest {
             tickerList.forEach(ticker -> {
                 StockDataItem dataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(ticker));
                 assertEquals(stockCountMap.get(ticker), dataItem == null ? dataItem : dataItem.getAlertCount());
-                if(dataItem != null){
+                if (dataItem != null) {
                     assertNotNull(dataItem.getExchange());
                     assertNotNull(dataItem.getPriority());
                 }
@@ -182,7 +184,7 @@ public class AlertDDBImplTest {
             tickerList.forEach(ticker -> {
                 StockDataItem dataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(ticker));
                 assertEquals(stockCountMap.get(ticker), dataItem == null ? dataItem : dataItem.getAlertCount());
-                if(dataItem != null){
+                if (dataItem != null) {
                     assertNotNull(dataItem.getExchange());
                     assertNotNull(dataItem.getPriority());
                 }
@@ -232,10 +234,10 @@ public class AlertDDBImplTest {
     public void Test_exceptionBehaviour_ForWatchListDelete() {
         alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
         StockDataItem dataItem = StockDataItem.builder(alertDataItemList.get(0).getTicker())
-                                                    .alertCount(1L)
-                                                    .exchange("DEF")
-                                                    .priority("P1")
-                                                    .build();
+                .alertCount(1L)
+                .exchange("DEF")
+                .priority("P1")
+                .build();
         LocalDDBServer.getDynamoDBMapper().save(dataItem);
 
         AlertDataItem alertDataItem = AlertDataItem.builder("ADBE", "tarun", "w1").build();
@@ -285,6 +287,20 @@ public class AlertDDBImplTest {
         alertDAO.deleteAlert(alertDataItem, false);
 
         alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+    }
 
+    @Test
+    public void Test_UpdatedAlertItem() {
+        alertDataItemList.get(0).setHasChanged(true);
+        alertDataItemList.get(1).setHasChanged(true);
+
+        alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
+
+        PaginatedItem<AlertDataItem, String> paginatedItem = alertDAO.getLatestUpdatedUsers(null, null);
+
+        assertFalse(paginatedItem.getCurrentItemList().isEmpty());
+        assertEquals(paginatedItem.getCurrentItemList().size(), 2);
+        assertEquals(paginatedItem.getCurrentItemList().get(0), alertDataItemList.get(0));
+        assertEquals(paginatedItem.getCurrentItemList().get(1), alertDataItemList.get(1));
     }
 }

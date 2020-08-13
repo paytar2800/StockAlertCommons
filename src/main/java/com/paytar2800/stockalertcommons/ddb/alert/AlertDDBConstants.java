@@ -21,4 +21,6 @@ public class AlertDDBConstants {
     public static final String ALERT_HIGH_PERCENT_KEY = "Hi";
     public static final String ALERT_TENDAYVOLPERCENT_KEY = "10d";
     public static final String ALERT_THREEMONTHVOLPERCENT_KEY = "3M";
+    public static final String TABLE_HAS_CHANGED_KEY = "Changed";
+    public static final String TABLE_HAS_CHANGED_GSI_KEY = "ChangedIndex";
 }
