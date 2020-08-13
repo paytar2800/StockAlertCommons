@@ -457,6 +457,7 @@ public class AlertDDBImpl implements AlertDAO {
         }
     }
 
+/*
     @Override
     public PaginatedItem<AlertDataItem, String> getLatestUpdatedUsers(String nextPageToken,
                                                                Integer maxItemsPerPage) {
@@ -485,6 +486,6 @@ public class AlertDDBImpl implements AlertDAO {
         List<AlertDataItem> results = queryResultPage.getResults();
 
         return new PaginatedItem<>(results, nextToken);
-    }
+    }*/
 
 }

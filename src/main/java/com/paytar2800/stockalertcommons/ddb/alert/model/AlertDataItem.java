@@ -9,7 +9,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.paytar2800.stockalertcommons.ddb.alert.AlertDDBConstants;
 import lombok.AllArgsConstructor;
@@ -101,10 +100,10 @@ public class AlertDataItem implements IAlertDBItem {
         return iAlertDBItem == null || iAlertDBItem.isEmpty();
     }
 
-    @Expose(serialize = false, deserialize = false)
+   /* @Expose(serialize = false, deserialize = false)
     @DynamoDBIndexHashKey(attributeName = AlertDDBConstants.TABLE_HAS_CHANGED_KEY,
             globalSecondaryIndexName = AlertDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
-    private Boolean hasChanged;
+    private Boolean hasChanged;*/
 
     @DynamoDBIgnore
     @Override
