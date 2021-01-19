@@ -27,6 +27,7 @@ public class UserData {
                 Integer subStatus = Integer.parseInt(fields[4]);
                 String deviceToken = fields[5];
                 Boolean isChanged = Boolean.parseBoolean(fields[6]);
+                String sound = fields[6];
 
                 UserDataItem dataItem = UserDataItem.builder()
                         .emailId(emailId)
@@ -35,6 +36,7 @@ public class UserData {
                         .subscriptionStatus(subStatus)
                         .alertSnoozeTimeSeconds(snoozeTime)
                         .deviceToken(deviceToken)
+                        .alertSound(sound)
                         .hasChanged(isChanged)
                         .build();
 

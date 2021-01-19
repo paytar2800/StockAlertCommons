@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ALERTSNOOZETIME_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ALERT_SOUND;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_TOKEN;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EMAIL_ID_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISALERTENABLED_PARAM;
@@ -63,6 +64,10 @@ public class UserDataItem {
     @SerializedName(API_DEVICE_TOKEN)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_TOKEN_KEY)
     private String deviceToken;
+
+    @SerializedName(API_ALERT_SOUND)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_ALERT_SOUND)
+    private String alertSound;
 
     @Expose(serialize = false, deserialize = false)
     @DynamoDBIndexHashKey(attributeName = UserDDBConstants.TABLE_HAS_CHANGED_KEY,
