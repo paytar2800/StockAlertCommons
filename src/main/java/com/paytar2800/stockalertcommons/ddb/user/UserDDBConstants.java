@@ -12,6 +12,7 @@ public class UserDDBConstants {
     public static final String TABLE_SUB_STATUS_KEY = "SubStatus";
     public static final String TABLE_DEVICE_TOKEN_KEY = "DeviceToken";
     public static final String TABLE_ALERT_SOUND= "Sound";
+    public static final String TABLE_DEVICE_OS= "OS";
     public static final String TABLE_HAS_CHANGED_KEY = "Changed";
     public static final String TABLE_HAS_CHANGED_GSI_KEY = "ChangedIndex";
 

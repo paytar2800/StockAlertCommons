@@ -22,6 +22,7 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISALERT
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISEXTENDEDHOURSENABLED_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SUB_STATUS_PARAM;
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_USER_ID_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_OS;
 
 /**
  * UserData Table Item
@@ -68,6 +69,10 @@ public class UserDataItem {
     @SerializedName(API_ALERT_SOUND)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_ALERT_SOUND)
     private String alertSound;
+
+    @SerializedName(API_DEVICE_OS)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_OS)
+    private String deviceOS;
 
     @Expose(serialize = false, deserialize = false)
     @DynamoDBIndexHashKey(attributeName = UserDDBConstants.TABLE_HAS_CHANGED_KEY,

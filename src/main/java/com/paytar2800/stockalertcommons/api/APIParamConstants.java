@@ -30,5 +30,6 @@ public class APIParamConstants {
     public static final String API_SUB_STATUS_PARAM = "subStatus";
     public static final String API_DEVICE_TOKEN = "device";
     public static final String API_ALERT_SOUND = "sound";
+    public static final String API_DEVICE_OS = "os";
 
 }
