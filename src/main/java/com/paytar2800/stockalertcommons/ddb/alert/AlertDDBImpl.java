@@ -43,6 +43,8 @@ public class AlertDDBImpl implements AlertDAO {
 
     private static final Logger logger = LogManager.getLogger(AlertDDBImpl.class);
 
+    private static final int MAX_ITEMS_ALLOWED_PER_BATCH = 25;
+
     private CustomDynamoDBMapper customDynamoDBMapper;
 
     public AlertDDBImpl(CustomDynamoDBMapper customDynamoDBMapper) {
@@ -319,10 +321,24 @@ public class AlertDDBImpl implements AlertDAO {
 
         if (list != null && !list.isEmpty()) {
             list.loadAllResults();
-            List<AlertDataItem> deleteList = new ArrayList<>(list);
-            performAlertDeletionTasks(deleteList);
-        }
 
+            List<AlertDataItem> deleteList = new ArrayList<>(list);
+
+            List<AlertDataItem> batchDeleteList = new ArrayList<>();
+
+            for (int i = 0; i < deleteList.size(); i++) {
+
+                batchDeleteList.add(deleteList.get(i));
+
+                //Either we are at the end of the list or the count is equal to max allowed fetch
+                if (i == deleteList.size() - 1 || batchDeleteList.size() >= MAX_ITEMS_ALLOWED_PER_BATCH) {
+
+                    performAlertDeletionTasks(batchDeleteList);
+
+                    batchDeleteList.clear();
+                }
+            }
+        }
     }
 
     private void performAlertDeletionTasks(List<AlertDataItem> deleteList) {
@@ -333,14 +349,14 @@ public class AlertDDBImpl implements AlertDAO {
 
     //TODO remove transactions for delete alert and reduce count and instead have separate tasks
     private void deleteAlertItemsAndReduceCountInStockTable(List<AlertDataItem> deleteList) {
+        TransactionWriteRequest transactionWriteRequest =
+                AlertDDBUtils.getTransactionWriteRequestForBatchAlertDelete(deleteList);
 
-        TransactionWriteRequest transactionWriteRequest = AlertDDBUtils.getTransactionWriteRequestForBatchAlertDelete(deleteList);
-
-        DynamoDBMapperConfig dynamoDBMapperConfig = AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
+        DynamoDBMapperConfig dynamoDBMapperConfig =
+                AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
 
         customDynamoDBMapper.transactionWriteForAlertAndStockTable(
                 transactionWriteRequest, dynamoDBMapperConfig, false);
-
     }
 
     /*
@@ -351,6 +367,7 @@ public class AlertDDBImpl implements AlertDAO {
     private void loadStockItemsAndDeleteStockWithZeroAlertCount(List<StockDataItem> stockDataItemList) {
 
         //TODO Load items partially instead of full stock item
+
         Map<String, List<Object>> dataItemMap = customDynamoDBMapper.batchLoad(stockDataItemList);
 
         List<Object> dataItemList = dataItemMap.get(STOCK_TABLE_NAME);
@@ -374,7 +391,6 @@ public class AlertDDBImpl implements AlertDAO {
                 }
             }
         }
-
 
         if (!deleteStockList.isEmpty()) {
             List<DynamoDBMapper.FailedBatch> failedBatches = customDynamoDBMapper.batchDelete(deleteStockList);
@@ -403,13 +419,24 @@ public class AlertDDBImpl implements AlertDAO {
 
         if (!list.isEmpty()) {
             list.loadAllResults();
+
             List<AlertDataItem> deleteList = new ArrayList<>(list);
-            performAlertDeletionForUser(deleteList);
+
+            List<AlertDataItem> batchDeleteList = new ArrayList<>();
+
+            for (int i = 0; i < deleteList.size(); i++) {
+                batchDeleteList.add(deleteList.get(i));
+                //Either we are at the end of the list or the count is equal to max allowed fetch
+                if (i == deleteList.size() - 1 || batchDeleteList.size() >= MAX_ITEMS_ALLOWED_PER_BATCH) {
+                    performAlertDeletionForUser(batchDeleteList);
+                    batchDeleteList.clear();
+                }
+            }
         }
     }
 
     /*
-     * Method without transactions
+     * This method is different from deleteAlertItem because same stockitem can be repeated multiple times
      */
     private void performAlertDeletionForUser(List<AlertDataItem> alertList) {
         HashMap<String, Long> stockDataCountMap = new HashMap<>();
@@ -426,66 +453,38 @@ public class AlertDDBImpl implements AlertDAO {
 
         List<DynamoDBMapper.FailedBatch> failedBatches = customDynamoDBMapper.batchDelete(alertList);
 
-        if (failedBatches == null || failedBatches.isEmpty()) {
-            List<StockDataItem> stockDataItemList = new ArrayList<>();
-
-            TransactionWriteRequest transactionWriteRequest = new TransactionWriteRequest();
-
-            for (Map.Entry<String, Long> entry : stockDataCountMap.entrySet()) {
-                StockDataItem dataItem = StockDataItem.builder(entry.getKey()).alertCount(entry.getValue()).build();
-                transactionWriteRequest.addUpdate(dataItem);
-                stockDataItemList.add(dataItem);
-            }
-
-            DynamoDBMapperConfig dynamoDBMapperConfig = AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
-
-            //Reduce the alert count for all the stocks using transaction since updateExpression is not available easily.
-            //TODO Remove the transaction from here and write batchUpdate with update expression
-            try {
-                customDynamoDBMapper.transactionWriteForAlertAndStockTable(transactionWriteRequest, dynamoDBMapperConfig,
-                        false);
-            } catch (TransactionCanceledException e) {
-                logger.error("error in deleting batch for reason = " + e.getCancellationReasons());
-                throw new DDBException("User deltion Error in transaction for reason = " + e.getCancellationReasons());
-            }
-
-            loadStockItemsAndDeleteStockWithZeroAlertCount(stockDataItemList);
+        if (failedBatches.isEmpty()) {
+            updateStockDataCount(stockDataCountMap);
         }
 
-        if (failedBatches != null && !failedBatches.isEmpty()) {
+        if (!failedBatches.isEmpty()) {
             throw new DDBException("User deletion failed for with failed batch = " + failedBatches);
         }
     }
 
-/*
-    @Override
-    public PaginatedItem<AlertDataItem, String> getLatestUpdatedUsers(String nextPageToken,
-                                                               Integer maxItemsPerPage) {
+    private void updateStockDataCount(HashMap<String, Long> stockDataCountMap) {
+        List<StockDataItem> stockDataItemList = new ArrayList<>();
 
-        Map<String, AttributeValue> eav = new HashMap<>();
-        String partitonKey = ":val1";
-        eav.put(partitonKey, new AttributeValue().withN("1"));
+        TransactionWriteRequest transactionWriteRequest = new TransactionWriteRequest();
 
-        DynamoDBQueryExpression<AlertDataItem> queryExpression =
-                new DynamoDBQueryExpression<AlertDataItem>()
-                        .withKeyConditionExpression(
-                                AlertDDBConstants.TABLE_HAS_CHANGED_KEY + " = " + partitonKey)
-                        .withExpressionAttributeValues(eav)
-                        .withIndexName(AlertDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
-                        .withExclusiveStartKey(unserializePaginationToken(nextPageToken))
-                        .withProjectionExpression(AlertDDBConstants.ALERT_TICKER_KEY + "," +
-                                AlertDDBConstants.ALERT_USERWATCHLISTID_KEY)
-                        .withConsistentRead(false)
-                        .withLimit(maxItemsPerPage);
+        for (Map.Entry<String, Long> entry : stockDataCountMap.entrySet()) {
+            StockDataItem dataItem = StockDataItem.builder(entry.getKey()).alertCount(entry.getValue()).build();
+            transactionWriteRequest.addUpdate(dataItem);
+            stockDataItemList.add(dataItem);
+        }
 
-        QueryResultPage<AlertDataItem> queryResultPage = customDynamoDBMapper.queryPage(
-                AlertDataItem.class, queryExpression);
+        DynamoDBMapperConfig dynamoDBMapperConfig = AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
 
-        String nextToken = serializePaginationToken(queryResultPage.getLastEvaluatedKey());
+        //Reduce the alert count for all the stocks using transaction since updateExpression is not available easily.
+        //TODO Remove the transaction from here and write batchUpdate with update expression
+        try {
+            customDynamoDBMapper.transactionWriteForAlertAndStockTable(transactionWriteRequest, dynamoDBMapperConfig,
+                    false);
+        } catch (TransactionCanceledException e) {
+            logger.error("error in deleting batch for reason = " + e.getCancellationReasons());
+            throw new DDBException("User deltion Error in transaction for reason = " + e.getCancellationReasons());
+        }
 
-        List<AlertDataItem> results = queryResultPage.getResults();
-
-        return new PaginatedItem<>(results, nextToken);
-    }*/
-
+        loadStockItemsAndDeleteStockWithZeroAlertCount(stockDataItemList);
+    }
 }
