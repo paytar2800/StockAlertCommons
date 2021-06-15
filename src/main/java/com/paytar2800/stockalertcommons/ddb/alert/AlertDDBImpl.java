@@ -43,7 +43,7 @@ public class AlertDDBImpl implements AlertDAO {
 
     private static final Logger logger = LogManager.getLogger(AlertDDBImpl.class);
 
-    private static final int MAX_ITEMS_ALLOWED_PER_BATCH = 25;
+    private static final int MAX_ITEMS_ALLOWED_PER_BATCH = 12;
 
     private CustomDynamoDBMapper customDynamoDBMapper;
 
