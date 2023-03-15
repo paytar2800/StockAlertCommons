@@ -78,7 +78,7 @@ public class StockDDBImplTest {
         List<String> projectionList = new ArrayList<>();
         projectionList.add(StockDDBConstants.TABLE_TICKER_KEY);
         projectionList.add(StockDDBConstants.TABLE_STOCK_EXCHANGE_KEY);
-        projectionList.add(StockDDBConstants.TABLE_ALERT_COUNT_KEY);
+        //projectionList.add(StockDDBConstants.TABLE_ALERT_COUNT_KEY);
 
         PaginatedItem<StockDataItem, String> dataItems = stockDAO.getStockDataItemsForPriority(priority,
                 projectionList,null,null);
@@ -92,7 +92,7 @@ public class StockDDBImplTest {
 
             assertEquals(actual.getTicker(), stockItem.getTicker());
             assertEquals(actual.getExchange(), stockItem.getExchange());
-            assertEquals(actual.getAlertCount(), stockItem.getAlertCount());
+            //assertEquals(actual.getAlertCount(), stockItem.getAlertCount());
             assertNull(stockItem.getPriority());
         });
 

@@ -110,7 +110,7 @@ public class AlertDDBImplTest {
         assertNotNull(dataItem);
 
         StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
-        assertEquals(new Long(1), stockItem.getAlertCount());
+        assertEquals(Long.valueOf(1), stockItem.getAlertCount());
     }
 
 
@@ -126,7 +126,7 @@ public class AlertDDBImplTest {
                 stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
                 assertNull(stockItem);
             } else {
-                assertEquals(new Long(count), stockItem.getAlertCount());
+                assertEquals(Long.valueOf(count), stockItem.getAlertCount());
                 assertNotNull(stockItem.getExchange());
                 assertNotNull(stockItem.getPriority());
             }
@@ -196,14 +196,14 @@ public class AlertDDBImplTest {
         StockDataItem dataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem("ADBE"));
 
         assertNotNull(dataItem);
-        assertEquals(dataItem.getAlertCount(), new Long(3));
+        assertEquals(dataItem.getAlertCount(), Long.valueOf(3));
 
         dataItem.setAlertCount(4L);
         alertDAO.updateStock(dataItem);
 
         StockDataItem actualDataItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem("ADBE"));
         assertNotNull(actualDataItem);
-        assertEquals(actualDataItem.getAlertCount(), new Long(4));
+        assertEquals(actualDataItem.getAlertCount(), Long.valueOf(4));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class AlertDDBImplTest {
 
         newAlertDataItem = alertDAO.getAlert(alertDataItem).get();
 
-        assertEquals(newAlertDataItem.getNetPercentChangeAlertItem().getTriggerTime(), new Long(100L));
+        assertEquals(newAlertDataItem.getNetPercentChangeAlertItem().getTriggerTime(), Long.valueOf(100L));
 
         alertDAO.deleteAlert(alertDataItem, false);
 

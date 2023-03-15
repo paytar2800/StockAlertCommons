@@ -1,7 +1,9 @@
 package com.paytar2800.stockalertcommons.ddb.util;
 
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.internal.StaticCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -9,6 +11,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.Projection;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.paytar2800.stockalertcommons.ddb.CustomDynamoDBMapper;
 
@@ -30,13 +33,13 @@ public class LocalDDBServer {
     public static void startServer() throws Exception {
         //Need to set the SQLite4Java library path to avoid a linker error
 
-        File file = new File("./DDBlocal_lib");
+        File file = new File("build/libs/");
 
         if(!file.exists()){
             throw new FileNotFoundException("DDB Library does not exists, download dynamodb_local jars first");
         }
 
-        System.setProperty("sqlite4java.library.path", "./DDBlocal_lib");
+        System.setProperty("sqlite4java.library.path", "build/libs/");
 
         // Create an in-memory and in-process instance of DynamoDB Local that runs over HTTP
         final String[] localArgs = {"-inMemory"};
@@ -63,7 +66,7 @@ public class LocalDDBServer {
 
     private static void connectToDB() {
         dynamoDB = AmazonDynamoDBClientBuilder.standard()
-                .withCredentials(new ProfileCredentialsProvider("paytar"))
+                .withCredentials(new StaticCredentialsProvider(new BasicAWSCredentials("key", "value")))
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(SERVICE_ENDPOINT, SIGNING_REGION))
                 .build();
         dynamoDBMapper = new DynamoDBMapper(dynamoDB);

@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id "io.freefair.lombok" version "4.1.6"
+    id "io.freefair.lombok" version "6.5.0"
 }
 
 group 'com.paytar2800'
@@ -12,7 +12,8 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven {
-        url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release/'
+        name "DynamoDB Local Release Repository"
+        url "https://s3-us-west-2.amazonaws.com/dynamodb-local/release"
     }
 }
 
@@ -35,8 +36,9 @@ dependencies {
 
     testImplementation group: 'com.amazonaws', name: 'DynamoDBLocal', version: '1.15.0'
     dynamodb fileTree (dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
-    dynamodb 'com.amazonaws:DynamoDBLocal:1.15.0'
+    //dynamodb 'com.amazonaws:DynamoDBLocal:1.18.0'
 
+    testImplementation 'io.github.ganadist.sqlite4java:libsqlite4java-osx-aarch64:1.0.392'
 }
 
 
