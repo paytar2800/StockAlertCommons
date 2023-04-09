@@ -5,6 +5,7 @@ import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface AlertDAO {
@@ -54,5 +55,7 @@ public interface AlertDAO {
 
     /*PaginatedItem<AlertDataItem, String> getLatestUpdatedUsers(String nextPageToken,
                                                                Integer maxItemsPerPage);*/
+
+    void copyBatchAlertDataToDeletedDataTable(List<AlertDataItem> alertDataItems);
 
 }

@@ -6,6 +6,7 @@ public class AlertDDBConstants {
      * AlertTable constants
      */
     public static final String ALERT_TABLE_NAME = "AlertTable";
+    public static final String ALERT_DELETED_DATA_TABLE_NAME = "AlertTable_deletedData";
     public static final String ALERT_TICKER_KEY = "Ticker";
     public static final String ALERT_USERWATCHLISTID_KEY = "UserWatchlist";
     public static final String ALERT_USERWATCHLIST_GSI_KEY = "UserWatchlistIndex";

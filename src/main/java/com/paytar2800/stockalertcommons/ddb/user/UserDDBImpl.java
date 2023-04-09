@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
+import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem_DeletedData;
 import lombok.NonNull;
 
 import java.util.ArrayList;
@@ -137,6 +138,12 @@ public class UserDDBImpl implements UserDAO {
     public void deleteItem(@NonNull UserDataItem dataItem) {
         UserDataItem item = UserDataItem.builder().userId(dataItem.getUserId()).build();
         dynamoDBMapper.delete(item);
+    }
+
+    @Override
+    public void copyUserDataToDeletedDataTable(UserDataItem userDataItem) {
+        UserDataItem_DeletedData userDataItemDeletedData = new UserDataItem_DeletedData(userDataItem);
+        dynamoDBMapper.save(userDataItemDeletedData);
     }
 
     private String serializePaginationToken(Map<String, AttributeValue> lastKeyMap) {

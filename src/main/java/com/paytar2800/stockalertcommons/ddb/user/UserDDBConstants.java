@@ -3,6 +3,7 @@ package com.paytar2800.stockalertcommons.ddb.user;
 public class UserDDBConstants {
 
     public static final String TABLE_NAME = "UserTable";
+    public static final String USER_DELETED_DATA_TABLE_NAME = "UserTable_deletedData";
     public static final String TABLE_EMAIL_KEY = "Email";
     public static final String TABLE_EMAIL_GSI_KEY = "EmailIndex";
     public static final String TABLE_USERID_KEY = "UserId";

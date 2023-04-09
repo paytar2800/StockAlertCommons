@@ -2,6 +2,7 @@ package com.paytar2800.stockalertcommons.ddb.alert;
 
 import com.amazonaws.util.IOUtils;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
+import com.paytar2800.stockalertcommons.ddb.alert.model.SimplePriceAlertItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
 
 import java.io.IOException;
@@ -27,8 +28,13 @@ public class AlertData {
                 String ticker = fields[0];
                 String userId = fields[1];
                 String watchlistid = fields[2];
+                SimplePriceAlertItem simplePriceAlertItem = new SimplePriceAlertItem();
+                simplePriceAlertItem.setHighPrice(Double.valueOf(fields[3]));
+                simplePriceAlertItem.setLowPrice(Double.valueOf(fields[4]));
+
 
                 AlertDataItem alertDataItem = AlertDataItem.builder(ticker, userId, watchlistid).build();
+                alertDataItem.setSimplePriceAlertItem(simplePriceAlertItem);
                 list.add(alertDataItem);
             }
 

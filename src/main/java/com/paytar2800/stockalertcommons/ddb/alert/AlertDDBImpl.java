@@ -1,15 +1,6 @@
 package com.paytar2800.stockalertcommons.ddb.alert;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTransactionWriteExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
-import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
-import com.amazonaws.services.dynamodbv2.datamodeling.TransactionWriteRequest;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.model.ConditionalOperator;
@@ -21,6 +12,7 @@ import com.paytar2800.stockalertcommons.ddb.CustomDynamoDBMapper;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
+import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem_DeletedData;
 import com.paytar2800.stockalertcommons.ddb.alert.model.IAlertDBItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
@@ -415,22 +407,26 @@ public class AlertDDBImpl implements AlertDAO {
                         .withProjectionExpression(AlertDDBConstants.ALERT_TICKER_KEY + "," + AlertDDBConstants.ALERT_USERWATCHLISTID_KEY)
                         .withConsistentRead(false);
 
-        PaginatedScanList<AlertDataItem> list = customDynamoDBMapper.scan(AlertDataItem.class, queryExpression);
+        PaginatedScanList<AlertDataItem> paginatedScanList = customDynamoDBMapper.scan(AlertDataItem.class, queryExpression);
 
-        if (!list.isEmpty()) {
-            list.loadAllResults();
-
-            List<AlertDataItem> deleteList = new ArrayList<>(list);
+        if (!paginatedScanList.isEmpty()) {
 
             List<AlertDataItem> batchDeleteList = new ArrayList<>();
 
-            for (int i = 0; i < deleteList.size(); i++) {
-                batchDeleteList.add(deleteList.get(i));
-                //Either we are at the end of the list or the count is equal to max allowed fetch
-                if (i == deleteList.size() - 1 || batchDeleteList.size() >= MAX_ITEMS_ALLOWED_PER_BATCH) {
+            for (AlertDataItem alertDataItem : paginatedScanList) {
+                batchDeleteList.add(alertDataItem);
+                //the count is equal to max allowed fetch
+                if (batchDeleteList.size() >= MAX_ITEMS_ALLOWED_PER_BATCH) {
+                    copyBatchAlertDataToDeletedDataTable(batchDeleteList);
                     performAlertDeletionForUser(batchDeleteList);
                     batchDeleteList.clear();
                 }
+            }
+
+            //this means we are at the end of the list
+            if(!batchDeleteList.isEmpty()) {
+                copyBatchAlertDataToDeletedDataTable(batchDeleteList);
+                performAlertDeletionForUser(batchDeleteList);
             }
         }
     }
@@ -487,4 +483,55 @@ public class AlertDDBImpl implements AlertDAO {
 
         loadStockItemsAndDeleteStockWithZeroAlertCount(stockDataItemList);
     }
+
+    @Override
+    public void copyBatchAlertDataToDeletedDataTable(List<AlertDataItem> alertDataItems) {
+        List<AlertDataItem> loadedFullAlertItems = batchLoadAlertDataItems(alertDataItems);
+        batchWriteAlertDataItems_deletedData(convertToDeletedDataItems(loadedFullAlertItems));
+    }
+
+    private List<AlertDataItem_DeletedData> convertToDeletedDataItems(List<AlertDataItem> loadedFullAlertItems) {
+        List<AlertDataItem_DeletedData> items = new ArrayList<>();
+        for(AlertDataItem alertDataItem : loadedFullAlertItems) {
+            items.add(new AlertDataItem_DeletedData(alertDataItem));
+        }
+
+        return items;
+    }
+
+    public void batchWriteAlertDataItems_deletedData(List<AlertDataItem_DeletedData> alertDataItems) {
+        // Divide the items into batches and write each batch
+        for (int i = 0; i < alertDataItems.size(); i += MAX_ITEMS_ALLOWED_PER_BATCH) {
+            int end = Math.min(i + MAX_ITEMS_ALLOWED_PER_BATCH, alertDataItems.size());
+            List<AlertDataItem_DeletedData> batchItems = alertDataItems.subList(i, end);
+            List<DynamoDBMapper.FailedBatch> failedBatch = customDynamoDBMapper.batchSave(batchItems);
+        }
+    }
+
+    public List<AlertDataItem> batchLoadAlertDataItems(List<AlertDataItem> alertDataItemKeys) {
+        List<AlertDataItem> alertDataItems = new ArrayList<>();
+
+        // Define the batch load request
+        Map<Class<?>, List<KeyPair>> batchLoadMap = new HashMap<>();
+        List<KeyPair> alertDataKeys = new ArrayList<>();
+
+        for (AlertDataItem alert : alertDataItemKeys) {
+            alertDataKeys.add(new KeyPair().withHashKey(alert.getTicker()).withRangeKey(alert.getUserWatchlistId()));
+        }
+
+        batchLoadMap.put(AlertDataItem.class, alertDataKeys);
+        Map<String, List<Object>> batchLoadResult = customDynamoDBMapper.batchLoad(batchLoadMap);
+
+        // Process the batch load result
+        List<Object> alertDataItemsFromDb = batchLoadResult.get(AlertDDBConstants.ALERT_TABLE_NAME);
+        if (alertDataItemsFromDb != null) {
+            for (Object item : alertDataItemsFromDb) {
+                AlertDataItem alertDataItem = (AlertDataItem) item;
+                alertDataItems.add(alertDataItem);
+            }
+        }
+
+        return alertDataItems;
+    }
+
 }

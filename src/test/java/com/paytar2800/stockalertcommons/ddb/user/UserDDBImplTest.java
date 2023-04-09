@@ -2,10 +2,13 @@ package com.paytar2800.stockalertcommons.ddb.user;
 
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
+import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem_DeletedData;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ public class UserDDBImplTest {
     public void before() throws Exception {
         LocalDDBServer.startServer();
         LocalDDBServer.createTable(UserDataItem.class);
+        LocalDDBServer.createTable(UserDataItem_DeletedData.class);
         itemList = UserData.getSampleData();
         userDAO = new UserDDBImpl(LocalDDBServer.getDynamoDBMapper());
     }
@@ -86,6 +90,28 @@ public class UserDDBImplTest {
             UserDataItem fetchItem = UserDataItem.builder().userId(item.getUserId()).build();
             UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(fetchItem);
             assertEquals(actualItem, item);
+        });
+    }
+
+    @Test
+    public void testPutItem_deletedData() {
+        itemList.forEach(item -> {
+            try {
+                userDAO.updateItem(item);
+            } catch (Exception e) {
+                fail("failed with exception = " + e.getMessage());
+            }
+        });
+        itemList.forEach(item -> {
+            UserDataItem fetchItem = UserDataItem.builder().userId(item.getUserId()).build();
+            UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(fetchItem);
+            UserDataItem_DeletedData dataItemDeleted = new UserDataItem_DeletedData(actualItem);
+            LocalDDBServer.saveItemToDB(dataItemDeleted);
+
+            UserDataItem_DeletedData dataItemDeletedDataFromDB = (UserDataItem_DeletedData)
+                    LocalDDBServer.loadItemFromDB(dataItemDeleted);
+
+            Assert.assertTrue(new ReflectionEquals(dataItemDeletedDataFromDB).matches(actualItem));
         });
     }
 

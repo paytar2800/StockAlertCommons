@@ -26,4 +26,6 @@ public interface UserDAO {
     void updateItem(@NonNull UserDataItem userDataItem);
 
     void deleteItem(@NonNull UserDataItem userDataItem);
+
+    void copyUserDataToDeletedDataTable(UserDataItem userDataItem);
 }

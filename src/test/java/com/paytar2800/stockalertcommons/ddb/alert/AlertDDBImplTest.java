@@ -1,25 +1,20 @@
 package com.paytar2800.stockalertcommons.ddb.alert;
 
-import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
-import com.paytar2800.stockalertcommons.ddb.alert.model.NetPercentChangeAlertItem;
-import com.paytar2800.stockalertcommons.ddb.alert.model.SimpleDailyPercentAlertItem;
-import com.paytar2800.stockalertcommons.ddb.alert.model.SimplePriceAlertItem;
-import com.paytar2800.stockalertcommons.ddb.alert.model.SimpleVolumePercentAlertItem;
-import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
+import com.paytar2800.stockalertcommons.ddb.alert.model.*;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AlertDDBImplTest {
 
@@ -32,6 +27,7 @@ public class AlertDDBImplTest {
         LocalDDBServer.startServer();
         LocalDDBServer.createTable(AlertDataItem.class);
         LocalDDBServer.createTable(StockDataItem.class);
+        LocalDDBServer.createTable(AlertDataItem_DeletedData.class);
         alertDataItemList = AlertData.getSampleData();
         stockCountMap = AlertData.getStockCountMap(alertDataItemList);
         alertDAO = new AlertDDBImpl(LocalDDBServer.getCustomMapper());
@@ -59,6 +55,20 @@ public class AlertDDBImplTest {
         alertDataItemList.forEach(alertDataItem -> {
             StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
             assertEquals(stockCountMap.get(stockItem.getTicker()), stockItem.getAlertCount());
+        });
+    }
+
+    @Test
+    public void test_copyUserDataToDeletedDataTable() {
+        alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
+
+        alertDAO.copyBatchAlertDataToDeletedDataTable(alertDataItemList);
+
+        alertDataItemList.forEach(alertDataItem -> {
+            AlertDataItem itemFromDB = (AlertDataItem) LocalDDBServer.loadItemFromDB(alertDataItem);
+            AlertDataItem_DeletedData itemFromDb2 =  (AlertDataItem_DeletedData)
+                    LocalDDBServer.loadItemFromDB(new AlertDataItem_DeletedData(itemFromDB));
+            Assert.assertTrue(new ReflectionEquals(itemFromDb2).matches(itemFromDB));
         });
     }
 
@@ -188,6 +198,13 @@ public class AlertDDBImplTest {
                 }
             });
         }
+
+        alertDataItemList.forEach(alertDataItem -> {
+            AlertDataItem_DeletedData alertDataItemDeletedData = (AlertDataItem_DeletedData) LocalDDBServer.loadItemFromDB(
+                    new AlertDataItem_DeletedData(alertDataItem));
+
+            Assert.assertTrue(new ReflectionEquals(alertDataItem).matches(alertDataItemDeletedData));
+        });
     }
 
     @Test
