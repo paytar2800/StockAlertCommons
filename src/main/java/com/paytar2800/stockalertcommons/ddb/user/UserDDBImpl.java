@@ -137,6 +137,8 @@ public class UserDDBImpl implements UserDAO {
 
     public void deleteItem(@NonNull UserDataItem dataItem) {
         UserDataItem item = UserDataItem.builder().userId(dataItem.getUserId()).build();
+        //copy userdata first.
+        copyUserDataToDeletedDataTable(item);
         dynamoDBMapper.delete(item);
     }
 
