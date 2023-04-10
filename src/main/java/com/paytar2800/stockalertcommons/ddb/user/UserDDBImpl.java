@@ -144,7 +144,8 @@ public class UserDDBImpl implements UserDAO {
 
     @Override
     public void copyUserDataToDeletedDataTable(UserDataItem userDataItem) {
-        UserDataItem_DeletedData userDataItemDeletedData = new UserDataItem_DeletedData(userDataItem);
+        UserDataItem_DeletedData userDataItemDeletedData = new UserDataItem_DeletedData(
+                dynamoDBMapper.load(userDataItem));
         dynamoDBMapper.save(userDataItemDeletedData);
     }
 
