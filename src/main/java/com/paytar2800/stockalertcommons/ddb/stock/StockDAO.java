@@ -18,4 +18,6 @@ public interface StockDAO {
     List<StockDataItem> getStockItemsForPriority(String priority, String exchange);
 
     void updateStock(StockDataItem dataItem);
+
+    List<StockDataItem> getAllStockDataItems();
 }

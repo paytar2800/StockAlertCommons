@@ -108,6 +108,13 @@ public class StockDDBImplTest {
     }
 
     @Test
+    public void testScanStockItems() {
+        addItemsToDB();
+        List<StockDataItem> dataItems = stockDAO.getAllStockDataItems();
+        compareStockDataItems(dataItems, stockDataItemList);
+    }
+
+    @Test
     public void updateStock() {
     }
 }

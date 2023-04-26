@@ -1,19 +1,12 @@
 package com.paytar2800.stockalertcommons.ddb.stock;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES;
 
@@ -120,6 +113,18 @@ public class StockDDBImpl implements StockDAO {
                 .withSaveBehavior(UPDATE_SKIP_NULL_ATTRIBUTES)
                 .build();
         dynamoDBMapper.save(dataItem, dynamoDBMapperConfig);
+    }
+
+    @Override
+    public List<StockDataItem> getAllStockDataItems() {
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withExclusiveStartKey(null);
+
+        PaginatedList<StockDataItem> pageResults = dynamoDBMapper.scan(StockDataItem.class, scanExpression);
+        pageResults.loadAllResults();
+
+        return pageResults;
     }
 
     private String serializePaginationToken(Map<String, AttributeValue> lastKeyMap) {
