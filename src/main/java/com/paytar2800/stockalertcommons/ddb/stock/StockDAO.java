@@ -20,4 +20,10 @@ public interface StockDAO {
     void updateStock(StockDataItem dataItem);
 
     List<StockDataItem> getAllStockDataItems();
+
+    /**
+     * This will disable tickers by changing the exchange value & priority to DISABLED
+     * @param staleTickers
+     */
+    void disableStaleTickers(List<String> staleTickers);
 }

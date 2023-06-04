@@ -1,5 +1,7 @@
 package com.paytar2800.stockalertcommons.ddb.stock;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
+import com.google.common.collect.ImmutableList;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
@@ -52,6 +54,11 @@ public class StockDDBImplTest {
     }
 
     private void compareStockDataItems(List<StockDataItem> expected, List<StockDataItem> actual){
+        assertEquals(expected.size(), actual.size());
+        expected.forEach(expectedItem -> assertTrue(actual.contains(expectedItem)));
+    }
+
+    private void compareTickerItems(List<String> expected, List<String> actual){
         assertEquals(expected.size(), actual.size());
         expected.forEach(expectedItem -> assertTrue(actual.contains(expectedItem)));
     }
@@ -115,6 +122,11 @@ public class StockDDBImplTest {
     }
 
     @Test
-    public void updateStock() {
+    public void addStaleTicker() {
+        List<String> list = ImmutableList.of("ADBE", "AMZN", "TSLA", "AMD");
+        addItemsToDB();
+        stockDAO.disableStaleTickers(list);
+        PaginatedItem<String, String> dataItems = stockDAO.getTickersForPriority(StockDDBConstants.STOCK_DISABLED_VALUE, null, null);
+        compareTickerItems(list, dataItems.getCurrentItemList());
     }
 }

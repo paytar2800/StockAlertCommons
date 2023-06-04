@@ -8,4 +8,6 @@ public class StockDDBConstants {
     public static final String TABLE_STOCK_EXCHANGE_KEY = "Exchange";
     public static final String TABLE_UPDATE_PRIORITY_GSI_KEY = "PriorityIndex";
     public static final String TABLE_STOCK_EXCHANGE_DEFAULT_VALUE = "DEF";
+    public static final String STOCK_DISABLED_VALUE = "DISABLED";
+    public static final int MAX_DDB_SAVE_BATCH = 25;
 }

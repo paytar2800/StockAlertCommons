@@ -9,6 +9,8 @@ import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
 import java.util.*;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES;
+import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.MAX_DDB_SAVE_BATCH;
+import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.STOCK_DISABLED_VALUE;
 
 public class StockDDBImpl implements StockDAO {
 
@@ -135,5 +137,34 @@ public class StockDDBImpl implements StockDAO {
     private Map<String, AttributeValue> unserializePaginationToken(String token) {
         NextTokenSerializer nextTokenSerializer = NextTokenSerializer.getInstance();
         return nextTokenSerializer.deserializeExclusiveStartKey(token);
+    }
+
+    @Override
+    public void disableStaleTickers(List<String> staleTickers) {
+        List<List<String>> batches = createBatches(staleTickers, MAX_DDB_SAVE_BATCH);
+
+        // Printing the batches
+        for (List<String> batch : batches) {
+            batchSave(batch);
+        }
+    }
+
+    private void batchSave(List<String> batch) {
+        List<StockDataItem> stockDataItemList = new ArrayList<>();
+        for(String ticker : batch) {
+            stockDataItemList.add(StockDataItem.builder(ticker).exchange(STOCK_DISABLED_VALUE)
+                    .priority(STOCK_DISABLED_VALUE).build());
+        }
+        dynamoDBMapper.batchSave(stockDataItemList);
+    }
+
+    public <T> List<List<T>> createBatches(List<T> items, int batchSize) {
+        List<List<T>> batches = new ArrayList<>();
+        int size = items.size();
+        for (int i = 0; i < size; i += batchSize) {
+            int endIndex = Math.min(i + batchSize, size);
+            batches.add(items.subList(i, endIndex));
+        }
+        return batches;
     }
 }
