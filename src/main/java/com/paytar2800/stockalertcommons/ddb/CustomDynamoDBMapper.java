@@ -34,7 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.TABLE_ALERT_COUNT_KEY;
+import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES;
+import static com.paytar2800.stockalertcommons.ddb.stock.StockDDBConstants.*;
 
 /**
  * Custom DB Mapper class created to add updateExpression in the code for transactionWrite
@@ -126,11 +127,34 @@ public class CustomDynamoDBMapper extends DynamoDBMapper {
                 String identifierForAlertCount = getIdentifier(writeItem.getUpdate().getExpressionAttributeNames(),
                         TABLE_ALERT_COUNT_KEY);
 
-                if (updateExpression != null && identifierForAlertCount != null) {
+                String identifierForExchange = getIdentifier(writeItem.getUpdate().getExpressionAttributeNames(),
+                        TABLE_STOCK_EXCHANGE_KEY);
 
-                    updateExpression = updateExpression.replace(identifierForAlertCount + " = ",
-                            identifierForAlertCount + " = " + " if_not_exists(" + identifierForAlertCount + ", :initial)" +
-                                    (shouldIncreaseAlertCount ? " + " : "-"));
+                String identifierForPriority= getIdentifier(writeItem.getUpdate().getExpressionAttributeNames(),
+                        TABLE_UPDATE_PRIORITY_KEY);
+
+                String exchange = ((StockDataItem) writeOperation.getObject()).getExchange();
+
+                if (updateExpression != null) {
+
+                    if(identifierForAlertCount != null) {
+                        updateExpression = updateExpression.replace(identifierForAlertCount + " = ",
+                                identifierForAlertCount + " = " + " if_not_exists(" + identifierForAlertCount + ", :initial)" +
+                                        (shouldIncreaseAlertCount ? " + " : "-"));
+                    }
+
+                    //if exchange is not equal to DEF then we always update the exchange otherwise we only add it if there is no exhcnage currently
+                    if(identifierForExchange != null && TABLE_STOCK_EXCHANGE_DEFAULT_VALUE.equalsIgnoreCase(exchange)) {
+                        String identifierForExchangeValue = identifierForExchange.replace("#", ":");
+                        updateExpression = updateExpression.replace(identifierForExchangeValue ,
+                                "if_not_exists(" + identifierForExchange + ", " + identifierForExchangeValue + ")");
+                    }
+
+                    if(identifierForPriority != null ) {
+                        String identifierForPriorityValue = identifierForPriority.replace("#", ":");
+                        updateExpression = updateExpression.replace(identifierForPriorityValue ,
+                                "if_not_exists(" + identifierForPriority + ", " + identifierForPriorityValue + ")");
+                    }
 
                     writeItem.getUpdate().setUpdateExpression(updateExpression);
                     writeItem.getUpdate().getExpressionAttributeValues().put(":initial", new AttributeValue().withN("0"));
