@@ -29,6 +29,12 @@ public class UserData {
                 Boolean isChanged = Boolean.parseBoolean(fields[6]);
                 String sound = fields[6];
 
+                String locale = null;
+                if(fields.length > 7) {
+                    locale = fields[7];
+                }
+
+
                 UserDataItem dataItem = UserDataItem.builder()
                         .emailId(emailId)
                         .userId(userId)
@@ -38,6 +44,7 @@ public class UserData {
                         .deviceToken(deviceToken)
                         .alertSound(sound)
                         .hasChanged(isChanged)
+                        .locale(locale)
                         .build();
 
                 list.add(dataItem);

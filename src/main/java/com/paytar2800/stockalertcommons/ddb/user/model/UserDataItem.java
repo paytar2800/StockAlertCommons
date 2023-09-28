@@ -14,15 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ALERTSNOOZETIME_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ALERT_SOUND;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_TOKEN;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EMAIL_ID_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISALERTENABLED_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISEXTENDEDHOURSENABLED_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SUB_STATUS_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_USER_ID_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_DEVICE_OS;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
 
 /**
  * UserData Table Item
@@ -73,6 +65,10 @@ public class UserDataItem {
     @SerializedName(API_DEVICE_OS)
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_OS)
     private String deviceOS;
+
+    @SerializedName(API_LOCALE)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_LOCALE)
+    private String locale;
 
     @Expose(serialize = false, deserialize = false)
     @DynamoDBIndexHashKey(attributeName = UserDDBConstants.TABLE_HAS_CHANGED_KEY,
