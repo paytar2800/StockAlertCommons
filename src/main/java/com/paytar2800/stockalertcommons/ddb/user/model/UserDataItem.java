@@ -14,6 +14,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
 
 /**
@@ -74,6 +76,9 @@ public class UserDataItem {
     @DynamoDBIndexHashKey(attributeName = UserDDBConstants.TABLE_HAS_CHANGED_KEY,
             globalSecondaryIndexName = UserDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)
     private Boolean hasChanged;
+
+    @Expose(serialize = false, deserialize = false)
+    private Date lastActiveDate;
 
     public String toJson() {
         Gson gson = new Gson();

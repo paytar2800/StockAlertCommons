@@ -10,7 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -177,6 +181,24 @@ public class UserDDBImplTest {
             assertNotNull(actualItem.getDeviceToken());
             assertNotNull(actualItem.getAlertSnoozeTimeSeconds());
             assertNotNull(actualItem.getIsAlertEnabled());
+        });
+    }
+
+    @Test
+    public void testLastActiveDate() throws ParseException {
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date today = new Date();
+        Date todayWithZeroTime = formatter.parse(formatter.format(today));
+
+       for(UserDataItem userDataItem : itemList) {
+           userDataItem.setLastActiveDate(todayWithZeroTime);
+           addItemToDB(userDataItem);
+       }
+
+        itemList.forEach(item -> {
+            UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(item);
+            assertEquals(actualItem.getUserId(), item.getUserId());
+            assertEquals(actualItem.getLastActiveDate(), todayWithZeroTime);
         });
     }
 
