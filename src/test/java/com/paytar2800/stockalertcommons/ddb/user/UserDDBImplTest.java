@@ -4,8 +4,8 @@ import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem_DeletedData;
 import com.paytar2800.stockalertcommons.ddb.util.LocalDDBServer;
+import com.paytar2800.stockalertcommons.ddb.util.ObjectComparator;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
@@ -22,9 +22,9 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+
+
 
 public class UserDDBImplTest {
 
@@ -115,7 +115,10 @@ public class UserDDBImplTest {
             UserDataItem_DeletedData dataItemDeletedDataFromDB = (UserDataItem_DeletedData)
                     LocalDDBServer.loadItemFromDB(dataItemDeleted);
 
-            Assert.assertTrue(new ReflectionEquals(dataItemDeletedDataFromDB).matches(actualItem));
+
+            ObjectComparator.areEqualIgnoringFields(dataItemDeletedDataFromDB, actualItem,
+                    "deleteDate", "isUserDeletedManually");
+
         });
     }
 
@@ -201,5 +204,6 @@ public class UserDDBImplTest {
             assertEquals(actualItem.getLastActiveDate(), todayWithZeroTime);
         });
     }
+
 
 }

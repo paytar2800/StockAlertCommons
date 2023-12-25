@@ -8,15 +8,16 @@ import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
+import com.paytar2800.stockalertcommons.ddb.StockUtils;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem_DeletedData;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES;
 
@@ -146,6 +147,7 @@ public class UserDDBImpl implements UserDAO {
     public void copyUserDataToDeletedDataTable(UserDataItem userDataItem) {
         UserDataItem_DeletedData userDataItemDeletedData = new UserDataItem_DeletedData(
                 dynamoDBMapper.load(userDataItem));
+        userDataItemDeletedData.setDeleteDate(StockUtils.getTodayDate());
         dynamoDBMapper.save(userDataItemDeletedData);
     }
 
@@ -158,5 +160,4 @@ public class UserDDBImpl implements UserDAO {
         NextTokenSerializer nextTokenSerializer = NextTokenSerializer.getInstance();
         return nextTokenSerializer.deserializeExclusiveStartKey(token);
     }
-
 }

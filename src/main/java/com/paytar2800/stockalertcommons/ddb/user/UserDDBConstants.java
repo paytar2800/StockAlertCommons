@@ -17,6 +17,8 @@ public class UserDDBConstants {
     public static final String TABLE_DEVICE_LOCALE = "Loc";
     public static final String TABLE_HAS_CHANGED_KEY = "Changed";
     public static final String TABLE_HAS_CHANGED_GSI_KEY = "ChangedIndex";
+    public static final String TABLE_IS_USER_DELETED_MANUALLY_KEY = "IsDeletedManually";
+    public static final String TABLE_USER_DELETE_DATE_KEY = "DeleteDate";
 
     public static final int UNSUBSCRIBED_CODE = -1;
     public static final int PREMIUM_SUBSCRIBED_CODE = 1;
