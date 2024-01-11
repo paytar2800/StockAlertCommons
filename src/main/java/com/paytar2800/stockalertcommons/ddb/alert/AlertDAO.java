@@ -23,6 +23,11 @@ public interface AlertDAO {
      */
     void updateAlert(AlertDataItem alertDataItem);
 
+    /**
+     * Use this method with care since its not been tested fully
+     */
+    void updateBatchAlerts(List<AlertDataItem> alertDataItemList);
+
     void updateStock(StockDataItem stockDataItem);
 
     /*
@@ -57,5 +62,11 @@ public interface AlertDAO {
                                                                Integer maxItemsPerPage);*/
 
     void copyBatchAlertDataToDeletedDataTable(List<AlertDataItem> alertDataItems);
+
+
+    /**
+     * Use this method with care since its not been tested fully
+     */
+    List<AlertDataItem> getAlertsForUser(String userId);
 
 }

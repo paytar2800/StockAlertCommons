@@ -10,6 +10,10 @@ public interface IAlertDBItem {
         return val == null || val <= 0L;
     }
 
+    default boolean isItemEmpty(Integer val) {
+        return val == null || val <= 0L;
+    }
+
     Long getTriggerTime();
 
     String getDBKeyName();

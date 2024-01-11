@@ -2,6 +2,7 @@ package com.paytar2800.stockalertcommons.ddb.user;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
+import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import lombok.NonNull;
 

@@ -9,12 +9,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AlertDDBImplTest {
 
@@ -51,8 +51,15 @@ public class AlertDDBImplTest {
 
     @Test
     public void putNewAlert() {
-        alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
-        alertDataItemList.forEach(alertDataItem -> {
+           alertDataItemList.forEach(alertDataItem -> {
+                    alertDataItem.setExchange("DEF");
+                    alertDAO.putNewAlert(alertDataItem, true);
+                });
+           alertDataItemList.forEach(alertDataItem -> {
+            alertDataItem.setExchange("NSE");
+            alertDAO.putNewAlert(alertDataItem, true);
+          });
+           alertDataItemList.forEach(alertDataItem -> {
             StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
             assertEquals(stockCountMap.get(stockItem.getTicker()), stockItem.getAlertCount());
         });
@@ -82,13 +89,72 @@ public class AlertDDBImplTest {
             alertDataItem.setSimpleVolumePercentAlertItem(
                     SimpleVolumePercentAlertItem.builder().triggerTime(22L).build());
             alertDataItem.setNetPercentChangeAlertItem(
-                    NetPercentChangeAlertItem.builder().highPercent(22.0).build()
-            );
+                    NetPercentChangeAlertItem.builder().highPercent(22.0).build());
+
+            alertDataItem.setDividendAlertItem(DividendAlertItem.builder().days(7).build());
+            alertDataItem.setEarningsAlertItem(EarningsAlertItem.builder().days(14).build());
+            alertDataItem.setFiftyDayAvgAlertItem(FiftyDayAvgAlertItem.builder()
+                    .high(13.0).low(14.0).triggerTime(22L).build());
+            alertDataItem.setTwoHundredDayAvgAlertItem(TwoHundredDayAvgAlertItem.builder()
+                    .high(19.0).low(21.0).build());
+            alertDataItem.setPegRatioAlertItem(PegRatioAlertItem.builder()
+                    .high(34.0).low(23.0).build());
+            alertDataItem.setShortPercentFloatAlertItem(ShortPercentFloatAlertItem.builder()
+                    .low(11.5).high(45.5).build());
+            alertDataItem.setShortRatioAlertItem(ShortRatioAlertItem.builder()
+                    .high(1.2).low(3.4).build());
+            alertDataItem.setTrailingPEAlertItem(TrailingPEAlertItem.builder()
+                    .high(3.4).low(1.9).build());
+            alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+
             alertDAO.updateAlert(alertDataItem);
             Optional<AlertDataItem> dataItem = alertDAO.getAlert(alertDataItem);
             assertTrue(dataItem.isPresent());
             assertEquals(alertDataItem, dataItem.get());
         });
+
+        alertDataItemList.forEach(alertDataItem -> {
+            StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
+            assertEquals(stockCountMap.get(stockItem.getTicker()), stockItem.getAlertCount());
+        });
+    }
+
+    @Test
+    public void testUpdateBatchList() {
+        List<AlertDataItem> alertDataItemBatchList = new ArrayList<>();
+        alertDataItemList.forEach(alertDataItem -> {
+            alertDataItem.setSimplePriceAlertItem(
+                    SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0).build());
+            alertDataItem.setSimpleDailyPercentAlertItem(
+                    SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
+            alertDataItem.setSimpleVolumePercentAlertItem(
+                    SimpleVolumePercentAlertItem.builder().triggerTime(22L).build());
+            alertDataItem.setNetPercentChangeAlertItem(
+                    NetPercentChangeAlertItem.builder().highPercent(22.0).build()
+            );
+            alertDataItem.setDividendAlertItem(DividendAlertItem.builder().days(7).build());
+            alertDataItem.setEarningsAlertItem(EarningsAlertItem.builder().days(14).build());
+            alertDataItem.setFiftyDayAvgAlertItem(FiftyDayAvgAlertItem.builder()
+                    .high(13.0).low(14.0).triggerTime(22L).build());
+            alertDataItem.setTwoHundredDayAvgAlertItem(TwoHundredDayAvgAlertItem.builder()
+                    .high(19.0).low(21.0).build());
+            alertDataItem.setPegRatioAlertItem(PegRatioAlertItem.builder()
+                    .high(34.0).low(23.0).build());
+            alertDataItem.setShortPercentFloatAlertItem(ShortPercentFloatAlertItem.builder()
+                    .low(11.5).high(45.5).build());
+            alertDataItem.setShortRatioAlertItem(ShortRatioAlertItem.builder()
+                    .high(1.2).low(3.4).build());
+            alertDataItem.setTrailingPEAlertItem(TrailingPEAlertItem.builder()
+                    .high(3.4).low(1.9).build());
+            alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+
+            alertDataItemBatchList.add(alertDataItem);
+        });
+
+        alertDataItemList.forEach(alertDataItem -> alertDAO.putNewAlert(alertDataItem, true));
+        alertDAO.updateBatchAlerts(alertDataItemBatchList);
 
         alertDataItemList.forEach(alertDataItem -> {
             StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
@@ -107,6 +173,23 @@ public class AlertDDBImplTest {
                 SimpleVolumePercentAlertItem.builder().triggerTime(22L).build());
         alertDataItem.setNetPercentChangeAlertItem(
                 NetPercentChangeAlertItem.builder().highPercent(22.0).build());
+
+        alertDataItem.setDividendAlertItem(DividendAlertItem.builder().days(7).build());
+        alertDataItem.setEarningsAlertItem(EarningsAlertItem.builder().days(14).build());
+        alertDataItem.setFiftyDayAvgAlertItem(FiftyDayAvgAlertItem.builder()
+                .high(13.0).low(14.0).triggerTime(22L).build());
+        alertDataItem.setTwoHundredDayAvgAlertItem(TwoHundredDayAvgAlertItem.builder()
+                .high(19.0).low(21.0).build());
+        alertDataItem.setPegRatioAlertItem(PegRatioAlertItem.builder()
+                .high(34.0).low(23.0).build());
+        alertDataItem.setShortPercentFloatAlertItem(ShortPercentFloatAlertItem.builder()
+                .low(11.5).high(45.5).build());
+        alertDataItem.setShortRatioAlertItem(ShortRatioAlertItem.builder()
+                .high(1.2).low(3.4).build());
+        alertDataItem.setTrailingPEAlertItem(TrailingPEAlertItem.builder()
+                .high(3.4).low(1.9).build());
+        alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
+                .high(9.9).low(1.3).build());
 
         alertDAO.updateAlert(alertDataItem);
 

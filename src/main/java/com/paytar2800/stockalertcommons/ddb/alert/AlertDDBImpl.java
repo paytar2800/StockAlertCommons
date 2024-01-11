@@ -16,6 +16,7 @@ import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem_DeletedDat
 import com.paytar2800.stockalertcommons.ddb.alert.model.IAlertDBItem;
 import com.paytar2800.stockalertcommons.ddb.alert.model.UserWatchlistId;
 import com.paytar2800.stockalertcommons.ddb.stock.model.StockDataItem;
+import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import com.paytar2800.stockalertcommons.exceptions.DDBException;
 import lombok.NonNull;
 import org.apache.logging.log4j.LogManager;
@@ -215,6 +216,16 @@ public class AlertDDBImpl implements AlertDAO {
         } catch (ConditionalCheckFailedException e) {
             logger.error("Alert update failed because alert not exists for " + alertDataItem.toString());
             putNewAlert(alertDataItem, true);
+        }
+    }
+
+    @Override
+    public void updateBatchAlerts(List<AlertDataItem> alertDataItemList) {
+        for (int i = 0; i < alertDataItemList.size(); i += MAX_ITEMS_ALLOWED_PER_BATCH) {
+            int end = Math.min(i + MAX_ITEMS_ALLOWED_PER_BATCH, alertDataItemList.size());
+            List<AlertDataItem> batchItems = new ArrayList<>(alertDataItemList.subList(i, end));
+            List<DynamoDBMapper.FailedBatch> failedBatches = customDynamoDBMapper.batchWrite(batchItems,
+                    new ArrayList<>(), AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate());
         }
     }
 
@@ -429,6 +440,31 @@ public class AlertDDBImpl implements AlertDAO {
                 performAlertDeletionForUser(batchDeleteList);
             }
         }
+    }
+
+    @Override
+    public List<AlertDataItem> getAlertsForUser(String userId) {
+        Map<String, AttributeValue> eav = new HashMap<>();
+        String secondaryKey = ":val1";
+        eav.put(secondaryKey, new AttributeValue().withS(userId + UserWatchlistId.getSeparator()));
+
+        DynamoDBScanExpression queryExpression =
+                new DynamoDBScanExpression()
+                        .withFilterExpression(String.format("begins_with(%s , %s)",
+                                AlertDDBConstants.ALERT_USERWATCHLISTID_KEY, secondaryKey))
+                        .withExpressionAttributeValues(eav)
+                        .withIndexName(AlertDDBConstants.ALERT_USERWATCHLIST_GSI_KEY)
+                        .withProjectionExpression(AlertDDBConstants.ALERT_TICKER_KEY + "," + AlertDDBConstants.ALERT_USERWATCHLISTID_KEY)
+                        .withConsistentRead(false);
+
+        PaginatedScanList<AlertDataItem> paginatedScanList = customDynamoDBMapper.scan(AlertDataItem.class, queryExpression);
+
+        List<AlertDataItem> allItems = new ArrayList<>();
+        for (AlertDataItem item : paginatedScanList) {
+            allItems.add(item);
+        }
+
+        return allItems;
     }
 
     /*

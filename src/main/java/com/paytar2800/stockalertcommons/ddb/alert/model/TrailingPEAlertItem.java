@@ -18,15 +18,15 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_LOW_PAR
 @NoArgsConstructor
 @Data
 @DynamoDBDocument
-public class SimplePriceAlertItem implements IAlertDBItem {
+public class TrailingPEAlertItem implements IAlertDBItem {
 
     @SerializedName(API_LOW_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LOW_KEY)
-    private Double lowPrice;
+    private Double low;
 
     @SerializedName(API_HIGH_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_HIGH_KEY)
-    private Double highPrice;
+    private Double high;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
     private transient Long triggerTime;
@@ -34,12 +34,12 @@ public class SimplePriceAlertItem implements IAlertDBItem {
     @DynamoDBIgnore
     @Override
     public boolean isEmpty() {
-        return isItemEmpty(lowPrice) && isItemEmpty(highPrice);
+        return isItemEmpty(low) && isItemEmpty(high);
     }
 
     @DynamoDBIgnore
     @Override
     public String getDBKeyName() {
-        return AlertDDBConstants.ALERT_SIMPLEPRICEALERT_KEY;
+        return AlertDDBConstants.ALERT_TRAILING_PE_ALERT_KEY;
     }
 }

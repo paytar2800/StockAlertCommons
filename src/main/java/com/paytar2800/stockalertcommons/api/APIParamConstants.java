@@ -12,6 +12,24 @@ public class APIParamConstants {
     public static final String API_SIMPLEDAILYPERCENTALERT_PARAM = "dailyPercent";
     public static final String API_NETPERCENTCHANGEALERT_PARAM = "netPercent";
     public static final String API_SIMPLEVOLUMEALERT_PARAM = "volume";
+
+    public static final String API_EARNING_ALERT_PARAM = "earning";
+
+    public static final String API_FORWARD_PE_ALERT_PARAM = "forwardPE";
+
+    public static final String API_TRAILING_PE_ALERT_PARAM = "trailPE";
+
+    public static final String API_DIVIDEND_ALERT_PARAM = "dividend";
+
+    public static final String API_SHORT_PERCENT_FLOAT_ALERT_PARAM = "shortPerFloat";
+
+    public static final String API_SHORT_RATIO_ALERT_PARAM = "shortRatio";
+
+    public static final String API_PEG_RATIO_ALERT_PARAM = "pegRatio";
+
+    public static final String API_FIFTY_DAY_AVG_ALERT_PARAM = "50dAvg";
+
+    public static final String API_TWO_HUNDRED_DAY_AVG_ALERT_PARAM = "200dAvg";
     public static final String API_LOW_PARAM = "low";
     public static final String API_HIGH_PARAM = "high";
     public static final String API_BASE_PARAM = "base";
@@ -19,6 +37,7 @@ public class APIParamConstants {
     public static final String API_THREEMONTH_PARAM = "3M";
     public static final String API_ISNEW_ALERT_PARAM = "isNew";
     public static final String API_EXCHANGE_PARAM = "exch";
+    public static final String API_DAY_PARAM = "day";
 
     /*
      * UserAPI Params

@@ -22,11 +22,11 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_LOW_PAR
 public class NetPercentChangeAlertItem implements IAlertDBItem {
 
     @SerializedName(API_LOW_PARAM)
-    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LOW_PERCENT_KEY)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LOW_KEY)
     private Double lowPercent;
 
     @SerializedName(API_HIGH_PARAM)
-    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_HIGH_PERCENT_KEY)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_HIGH_KEY)
     private Double highPercent;
 
     @SerializedName(API_BASE_PARAM)

@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.paytar2800.stockalertcommons.ddb.NextTokenSerializer;
 import com.paytar2800.stockalertcommons.ddb.PaginatedItem;
 import com.paytar2800.stockalertcommons.ddb.StockUtils;
+import com.paytar2800.stockalertcommons.ddb.alert.model.AlertDataItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem;
 import com.paytar2800.stockalertcommons.ddb.user.model.UserDataItem_DeletedData;
 import lombok.NonNull;

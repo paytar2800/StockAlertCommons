@@ -52,7 +52,7 @@ class AlertDDBUtils {
         return transactionWriteRequest;
     }
 
-    static DynamoDBMapperConfig getDynamoDBMapperConfigForPartialUpdate() {
+    public static DynamoDBMapperConfig getDynamoDBMapperConfigForPartialUpdate() {
         return DynamoDBMapperConfig.builder()
                 .withSaveBehavior(UPDATE_SKIP_NULL_ATTRIBUTES)
                 .build();

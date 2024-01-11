@@ -18,14 +18,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_EXCHANGE_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_ISNEW_ALERT_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_NETPERCENTCHANGEALERT_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SIMPLEDAILYPERCENTALERT_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SIMPLEPRICEALERT_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_SIMPLEVOLUMEALERT_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_TICKER_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_USERWATCHLISTID_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
 
 
 /**
@@ -67,6 +60,42 @@ public class AlertDataItem implements IAlertDBItem {
     @SerializedName(API_SIMPLEVOLUMEALERT_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_SIMPLEVOLUMEALERT_KEY)
     private SimpleVolumePercentAlertItem simpleVolumePercentAlertItem;
+
+    @SerializedName(API_EARNING_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_EARNINGS_ALERT_KEY)
+    private EarningsAlertItem earningsAlertItem;
+
+    @SerializedName(API_DIVIDEND_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_DIVIDEND_ALERT_KEY)
+    private DividendAlertItem dividendAlertItem;
+
+    @SerializedName(API_FIFTY_DAY_AVG_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_FIFTYDAYAVG_ALERT_KEY)
+    private FiftyDayAvgAlertItem fiftyDayAvgAlertItem;
+
+    @SerializedName(API_TWO_HUNDRED_DAY_AVG_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_TWOHUNDREDDAYAVG_ALERT_KEY)
+    private TwoHundredDayAvgAlertItem twoHundredDayAvgAlertItem;
+
+    @SerializedName(API_PEG_RATIO_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PEGRATIO_ALERT_KEY)
+    private PegRatioAlertItem pegRatioAlertItem;
+
+    @SerializedName(API_SHORT_PERCENT_FLOAT_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_SHORTPERCENTFLOAT_ALERT_KEY)
+    private ShortPercentFloatAlertItem shortPercentFloatAlertItem;
+
+    @SerializedName(API_SHORT_RATIO_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_SHORTRATIO_ALERT_KEY)
+    private ShortRatioAlertItem shortRatioAlertItem;
+
+    @SerializedName(API_FORWARD_PE_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_FORWARD_PE_ALERT_KEY)
+    private ForwardPEAlertItem forwardPEAlertItem;
+
+    @SerializedName(API_TRAILING_PE_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_TRAILING_PE_ALERT_KEY)
+    private TrailingPEAlertItem trailingPEAlertItem;
 
     @SerializedName(API_ISNEW_ALERT_PARAM)
     private boolean isNewAlert;
