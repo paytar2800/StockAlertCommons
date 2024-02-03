@@ -30,6 +30,9 @@ public class AlertDDBConstants {
     public static final String ALERT_LOW_KEY = "Lo";
 
     public static final String ALERT_HIGH_KEY = "Hi";
+
+    public static final String ALERT_RECUR_PARAM_KEY = "Rec";
+    public static final String ALERT_LAST_TRIGGER_PRICE_PARAM_KEY = "TP";
     public static final String ALERT_DAY__KEY = "D";
     public static final String ALERT_TENDAYVOLPERCENT_KEY = "10d";
     public static final String ALERT_THREEMONTHVOLPERCENT_KEY = "3M";

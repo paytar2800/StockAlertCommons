@@ -33,6 +33,7 @@ public class APIParamConstants {
     public static final String API_LOW_PARAM = "low";
     public static final String API_HIGH_PARAM = "high";
     public static final String API_BASE_PARAM = "base";
+    public static final String API_RECUR_FACTOR_PARAM = "recur";
     public static final String API_TENDAY_PARAM = "10d";
     public static final String API_THREEMONTH_PARAM = "3M";
     public static final String API_ISNEW_ALERT_PARAM = "isNew";

@@ -10,8 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_HIGH_PARAM;
-import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_LOW_PARAM;
+import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
 
 @Builder
 @AllArgsConstructor
@@ -27,6 +26,13 @@ public class SimplePriceAlertItem implements IAlertDBItem {
     @SerializedName(API_HIGH_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_HIGH_KEY)
     private Double highPrice;
+
+    @SerializedName(API_RECUR_FACTOR_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_RECUR_PARAM_KEY)
+    private Double recurFactor;
+
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LAST_TRIGGER_PRICE_PARAM_KEY)
+    private Double lastTriggerPrice;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
     private transient Long triggerTime;
