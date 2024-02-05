@@ -11,6 +11,8 @@ public class AlertDDBConstants {
     public static final String ALERT_USERWATCHLISTID_KEY = "UserWatchlist";
     public static final String ALERT_USERWATCHLIST_GSI_KEY = "UserWatchlistIndex";
     public static final String ALERT_SIMPLEPRICEALERT_KEY = "Price";
+
+    public static final String ALERT_RECURRING_PRICEALERT_KEY = "RecPr";
     public static final String ALERT_SIMPLEVOLUMEALERT_KEY = "Vol";
     public static final String ALERT_SIMPLEDAILYPERCENTALERT_KEY = "DailyPer";
     public static final String ALERT_NETPERCENTCHANGEALERT_KEY = "NetPer";

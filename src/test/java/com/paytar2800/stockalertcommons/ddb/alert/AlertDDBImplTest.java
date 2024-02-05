@@ -83,7 +83,9 @@ public class AlertDDBImplTest {
     public void updateAlert() {
         alertDataItemList.forEach(alertDataItem -> {
             alertDataItem.setSimplePriceAlertItem(
-                    SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
+                    SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0).build());
+            alertDataItem.setRecurringPriceAlertItem(
+                    RecurringPriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
                             .recurFactor(10.0).lastTriggerPrice(22.0).build());
             alertDataItem.setSimpleDailyPercentAlertItem(
                     SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
@@ -126,7 +128,9 @@ public class AlertDDBImplTest {
         List<AlertDataItem> alertDataItemBatchList = new ArrayList<>();
         alertDataItemList.forEach(alertDataItem -> {
             alertDataItem.setSimplePriceAlertItem(
-                    SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
+                    SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0).build());
+            alertDataItem.setRecurringPriceAlertItem(
+                    RecurringPriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
                             .recurFactor(10.0).lastTriggerPrice(22.0).build());
             alertDataItem.setSimpleDailyPercentAlertItem(
                     SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
@@ -168,8 +172,10 @@ public class AlertDDBImplTest {
     public void testUpdate() {
         AlertDataItem alertDataItem = alertDataItemList.get(0);
         alertDataItem.setSimplePriceAlertItem(
-                SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
-                        .recurFactor(10.0).lastTriggerPrice(22.0).build());;
+                SimplePriceAlertItem.builder().highPrice(23.0).lowPrice(24.0).build());
+        alertDataItem.setRecurringPriceAlertItem(
+                RecurringPriceAlertItem.builder().highPrice(23.0).lowPrice(24.0)
+                        .recurFactor(10.0).lastTriggerPrice(22.0).build());
         alertDataItem.setSimpleDailyPercentAlertItem(
                 SimpleDailyPercentAlertItem.builder().lowPercent(22.0).build());
         alertDataItem.setSimpleVolumePercentAlertItem(
