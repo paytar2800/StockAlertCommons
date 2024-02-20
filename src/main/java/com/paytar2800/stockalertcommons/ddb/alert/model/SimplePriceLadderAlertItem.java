@@ -17,7 +17,7 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
 @NoArgsConstructor
 @Data
 @DynamoDBDocument
-public class RecurringPriceAlertItem implements IAlertDBItem {
+public class SimplePriceLadderAlertItem implements IAlertDBItem {
 
     @SerializedName(API_LOW_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LOW_KEY)
@@ -27,12 +27,13 @@ public class RecurringPriceAlertItem implements IAlertDBItem {
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_HIGH_KEY)
     private Double highPrice;
 
-    @SerializedName(API_RECUR_FACTOR_PARAM)
-    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_RECUR_PARAM_KEY)
-    private Double recurFactor;
+    @SerializedName(API_LADDER_STEP_PRICE_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LADDER_STEP_PRICE_PARAM_KEY)
+    private Double ladderStepPrice;
 
+    @SerializedName(API_ACKNOWLEDGED_STEP_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LAST_TRIGGER_PRICE_PARAM_KEY)
-    private Double lastTriggerPrice;
+    private Double lastAcknowledgedStep;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
     private transient Long triggerTime;

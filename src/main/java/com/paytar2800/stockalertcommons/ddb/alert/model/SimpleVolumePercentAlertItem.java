@@ -18,7 +18,7 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_THREEMO
 @NoArgsConstructor
 @Data
 @DynamoDBDocument
-public class SimpleVolumePercentAlertItem implements IAlertDBItem{
+public class SimpleVolumePercentAlertItem implements IAlertDBItem {
 
     @SerializedName(API_TENDAY_PARAM)
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_TENDAYVOLPERCENT_KEY)
