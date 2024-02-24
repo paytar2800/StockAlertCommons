@@ -49,8 +49,8 @@ public class AlertDataItem implements IAlertDBItem {
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_SIMPLEPRICEALERT_KEY)
     private SimplePriceAlertItem simplePriceAlertItem;
 
-    @SerializedName(API_RECUR_PRICEALERT_PARAM)
-    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_RECURRING_PRICEALERT_KEY)
+    @SerializedName(API_PRICE_LADDER_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PRICE_LADDER_ALERT_KEY)
     private SimplePriceLadderAlertItem simplePriceLadderAlertItem;
 
     @SerializedName(API_SIMPLEDAILYPERCENTALERT_PARAM)

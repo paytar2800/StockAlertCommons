@@ -9,7 +9,7 @@ public class APIParamConstants {
     public static final String API_WATCHLIST_ID_PARAM = "watchlistId";
     public static final String API_USERWATCHLISTID_PARAM = "userWatchlist";
     public static final String API_SIMPLEPRICEALERT_PARAM = "price";
-    public static final String API_RECUR_PRICEALERT_PARAM = "recurPrice";
+    public static final String API_PRICE_LADDER_ALERT_PARAM = "ladder";
     public static final String API_SIMPLEDAILYPERCENTALERT_PARAM = "dailyPercent";
     public static final String API_NETPERCENTCHANGEALERT_PARAM = "netPercent";
     public static final String API_SIMPLEVOLUMEALERT_PARAM = "volume";
