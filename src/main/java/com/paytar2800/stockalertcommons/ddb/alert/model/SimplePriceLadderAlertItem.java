@@ -32,7 +32,7 @@ public class SimplePriceLadderAlertItem implements IAlertDBItem {
     private Double ladderStepPrice;
 
     @SerializedName(API_ACKNOWLEDGED_STEP_PARAM)
-    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LAST_TRIGGER_PRICE_PARAM_KEY)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LAST_ACKNOWLEDGED_STEP_PARAM_KEY)
     private Double lastAcknowledgedStep;
 
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LASTTRIGGERTIME_KEY)
