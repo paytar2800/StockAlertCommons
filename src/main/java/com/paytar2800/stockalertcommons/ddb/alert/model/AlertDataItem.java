@@ -101,6 +101,18 @@ public class AlertDataItem implements IAlertDBItem {
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_TRAILING_PE_ALERT_KEY)
     private TrailingPEAlertItem trailingPEAlertItem;
 
+    @SerializedName(API_PRICE_VS_50D_AVG_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PRICE_VS_50D_AVG_ALERT_PARAM)
+    private PriceVsFiftyDaySMAAlertItem priceVsFiftyDaySMAAlertItem;
+
+    @SerializedName(API_PRICE_VS_200D_AVG_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PRICE_VS_200D_AVG_ALERT_PARAM)
+    private PriceVsTwoHundredDaySMAAlertItem priceVsTwoHundredDaySMAAlertItem;
+
+    @SerializedName(API_PRICE_VS_52W_ALERT_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PRICE_VS_52W_ALERT_PARAM)
+    private PriceVs52wRangeAlertItem priceVs52wRangeAlertItem;
+
     @SerializedName(API_ISNEW_ALERT_PARAM)
     private boolean isNewAlert;
 
@@ -144,7 +156,20 @@ public class AlertDataItem implements IAlertDBItem {
         return isAlertEmpty(simplePriceAlertItem)
                 && isAlertEmpty(simpleDailyPercentAlertItem)
                 && isAlertEmpty(simpleVolumePercentAlertItem)
-                && isAlertEmpty(netPercentChangeAlertItem);
+                && isAlertEmpty(netPercentChangeAlertItem)
+                && isAlertEmpty(earningsAlertItem)
+                && isAlertEmpty(dividendAlertItem)
+                && isAlertEmpty(fiftyDayAvgAlertItem)
+                && isAlertEmpty(twoHundredDayAvgAlertItem)
+                && isAlertEmpty(pegRatioAlertItem)
+                && isAlertEmpty(shortPercentFloatAlertItem)
+                && isAlertEmpty(shortRatioAlertItem)
+                && isAlertEmpty(forwardPEAlertItem)
+                && isAlertEmpty(trailingPEAlertItem)
+                && isAlertEmpty(priceVsFiftyDaySMAAlertItem)
+                && isAlertEmpty(priceVsTwoHundredDaySMAAlertItem)
+                && isAlertEmpty(priceVs52wRangeAlertItem)
+                && isAlertEmpty(simplePriceLadderAlertItem);
     }
 
     @DynamoDBIgnore

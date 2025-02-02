@@ -31,6 +31,13 @@ public class APIParamConstants {
     public static final String API_FIFTY_DAY_AVG_ALERT_PARAM = "50dAvg";
 
     public static final String API_TWO_HUNDRED_DAY_AVG_ALERT_PARAM = "200dAvg";
+
+    public static final String API_PRICE_VS_50D_AVG_ALERT_PARAM = "prVs50d";
+
+    public static final String API_PRICE_VS_200D_AVG_ALERT_PARAM = "prVs200d";
+
+    public static final String API_PRICE_VS_52W_ALERT_PARAM = "prVs52w";
+
     public static final String API_LOW_PARAM = "low";
     public static final String API_HIGH_PARAM = "high";
     public static final String API_BASE_PARAM = "base";

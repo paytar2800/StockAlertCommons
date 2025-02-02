@@ -110,6 +110,12 @@ public class AlertDDBImplTest {
                     .high(3.4).low(1.9).build());
             alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
                     .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVsFiftyDaySMAAlertItem(PriceVsFiftyDaySMAAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVsTwoHundredDaySMAAlertItem(PriceVsTwoHundredDaySMAAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVs52wRangeAlertItem(PriceVs52wRangeAlertItem.builder()
+                    .high(9.9).low(1.3).build());
 
             alertDAO.updateAlert(alertDataItem);
             Optional<AlertDataItem> dataItem = alertDAO.getAlert(alertDataItem);
@@ -155,6 +161,12 @@ public class AlertDDBImplTest {
                     .high(3.4).low(1.9).build());
             alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
                     .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVsFiftyDaySMAAlertItem(PriceVsFiftyDaySMAAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVsTwoHundredDaySMAAlertItem(PriceVsTwoHundredDaySMAAlertItem.builder()
+                    .high(9.9).low(1.3).build());
+            alertDataItem.setPriceVs52wRangeAlertItem(PriceVs52wRangeAlertItem.builder()
+                    .high(9.9).low(1.3).build());
 
             alertDataItemBatchList.add(alertDataItem);
         });
@@ -198,6 +210,12 @@ public class AlertDDBImplTest {
         alertDataItem.setTrailingPEAlertItem(TrailingPEAlertItem.builder()
                 .high(3.4).low(1.9).build());
         alertDataItem.setForwardPEAlertItem(ForwardPEAlertItem.builder()
+                .high(9.9).low(1.3).build());
+        alertDataItem.setPriceVsFiftyDaySMAAlertItem(PriceVsFiftyDaySMAAlertItem.builder()
+                .high(9.9).low(1.3).build());
+        alertDataItem.setPriceVsTwoHundredDaySMAAlertItem(PriceVsTwoHundredDaySMAAlertItem.builder()
+                .high(9.9).low(1.3).build());
+        alertDataItem.setPriceVs52wRangeAlertItem(PriceVs52wRangeAlertItem.builder()
                 .high(9.9).low(1.3).build());
 
         alertDAO.updateAlert(alertDataItem);

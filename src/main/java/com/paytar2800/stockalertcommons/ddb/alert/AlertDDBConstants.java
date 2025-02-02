@@ -25,6 +25,9 @@ public class AlertDDBConstants {
     public static final String ALERT_PEGRATIO_ALERT_KEY = "PegRatio";
     public static final String ALERT_FIFTYDAYAVG_ALERT_KEY = "50dAvg";
     public static final String ALERT_TWOHUNDREDDAYAVG_ALERT_KEY = "200dAvg";
+    public static final String ALERT_PRICE_VS_50D_AVG_ALERT_PARAM = "PrVs50d";
+    public static final String ALERT_PRICE_VS_200D_AVG_ALERT_PARAM = "PrVs200d";
+    public static final String ALERT_PRICE_VS_52W_ALERT_PARAM = "PrVs52w";
 
     public static final String ALERT_LASTTRIGGERTIME_KEY = "TT";
     public static final String ALERT_BASE_PRICE_KEY = "Ba";
@@ -40,4 +43,5 @@ public class AlertDDBConstants {
     public static final String ALERT_THREEMONTHVOLPERCENT_KEY = "3M";
     public static final String TABLE_HAS_CHANGED_KEY = "Changed";
     public static final String TABLE_HAS_CHANGED_GSI_KEY = "ChangedIndex";
+
 }
