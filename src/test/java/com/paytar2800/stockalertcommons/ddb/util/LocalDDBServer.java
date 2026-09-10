@@ -12,8 +12,10 @@ import com.amazonaws.services.dynamodbv2.local.main.ServerRunner;
 import com.amazonaws.services.dynamodbv2.local.server.DynamoDBProxyServer;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.Projection;
+import com.amazonaws.services.dynamodbv2.model.ProjectionType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.paytar2800.stockalertcommons.ddb.CustomDynamoDBMapper;
+import com.paytar2800.stockalertcommons.ddb.watchlist.WatchlistDDBConstants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,7 +77,20 @@ public class LocalDDBServer {
     public static void createTable(Class<?> clazz) {
         CreateTableRequest createTableRequest = getDynamoDBMapper().generateCreateTableRequest(clazz);
         if (createTableRequest.getGlobalSecondaryIndexes() != null) {
-            createTableRequest.getGlobalSecondaryIndexes().forEach(v -> v.setProvisionedThroughput(THROUGHPUT));
+            createTableRequest.getGlobalSecondaryIndexes().forEach(v -> {
+                v.setProvisionedThroughput(THROUGHPUT);
+                if (WatchlistDDBConstants.WATCHLIST_METADATA_GSI.equals(v.getIndexName())) {
+                    v.setProjection(new Projection()
+                            .withProjectionType(ProjectionType.INCLUDE)
+                            .withNonKeyAttributes(
+                                    WatchlistDDBConstants.TABLE_WATCHLIST_NAME_KEY,
+                                    WatchlistDDBConstants.TABLE_DISPLAY_ORDER_KEY,
+                                    WatchlistDDBConstants.TABLE_LAST_UPDATE_TIME_KEY
+                            ));
+                } else if (v.getProjection() == null) {
+                    v.setProjection(new Projection().withProjectionType(ProjectionType.ALL));
+                }
+            });
         }
         createTableRequest.setProvisionedThroughput(THROUGHPUT);
         dynamoDB.createTable(createTableRequest);

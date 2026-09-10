@@ -32,6 +32,20 @@ public class WatchlistDDBImpl implements WatchlistDAO {
     }
 
     @Override
+    public List<WatchlistDataItem> getWatchlistsMetadataForUser(String userId) {
+        WatchlistDataItem keyObject = WatchlistDataItem.builder()
+                .userId(userId)
+                .build();
+        DynamoDBQueryExpression<WatchlistDataItem> queryExpression =
+                new DynamoDBQueryExpression<WatchlistDataItem>()
+                        .withHashKeyValues(keyObject)
+                        .withIndexName(WatchlistDDBConstants.WATCHLIST_METADATA_GSI)
+                        .withConsistentRead(false);
+        PaginatedQueryList<WatchlistDataItem> results = dynamoDBMapper.query(WatchlistDataItem.class, queryExpression);
+        return results != null ? new ArrayList<>(results) : Collections.emptyList();
+    }
+
+    @Override
     public Optional<WatchlistDataItem> getWatchlist(String userId, String watchlistId) {
         return Optional.ofNullable(dynamoDBMapper.load(WatchlistDataItem.class, userId, watchlistId));
     }

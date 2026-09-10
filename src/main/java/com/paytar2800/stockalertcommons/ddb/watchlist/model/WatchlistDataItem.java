@@ -2,6 +2,8 @@ package com.paytar2800.stockalertcommons.ddb.watchlist.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.google.gson.Gson;
@@ -29,11 +31,15 @@ import static com.paytar2800.stockalertcommons.api.APIParamConstants.API_WATCHLI
 public class WatchlistDataItem {
 
     @SerializedName(API_USER_ID_PARAM)
-    @DynamoDBHashKey(attributeName = WatchlistDDBConstants.KEY_USER_ID)
+    @DynamoDBHashKey(attributeName = WatchlistDDBConstants.TABLE_USER_ID_KEY)
+    @DynamoDBIndexHashKey(attributeName = WatchlistDDBConstants.TABLE_USER_ID_KEY,
+            globalSecondaryIndexName = WatchlistDDBConstants.WATCHLIST_METADATA_GSI)
     private String userId;
 
     @SerializedName(API_WATCHLIST_ID_PARAM)
-    @DynamoDBRangeKey(attributeName = WatchlistDDBConstants.KEY_WATCHLIST_ID)
+    @DynamoDBRangeKey(attributeName = WatchlistDDBConstants.TABLE_WATCHLIST_ID_KEY)
+    @DynamoDBIndexRangeKey(attributeName = WatchlistDDBConstants.TABLE_WATCHLIST_ID_KEY,
+            globalSecondaryIndexName = WatchlistDDBConstants.WATCHLIST_METADATA_GSI)
     private String watchlistId;
 
     @SerializedName(API_WATCHLIST_NAME_PARAM)

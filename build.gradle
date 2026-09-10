@@ -12,6 +12,31 @@ jacocoTestReport {
     }
 }
 
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            includes = [
+                'com.paytar2800.stockalertcommons.ddb.watchlist.WatchlistDDBImpl'
+            ]
+            limit {
+                counter = 'LINE'
+                minimum = 0.95
+            }
+            limit {
+                counter = 'BRANCH'
+                minimum = 0.95
+            }
+            limit {
+                counter = 'INSTRUCTION'
+                minimum = 0.95
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestCoverageVerification
+
 group 'com.paytar2800'
 version '1.0-SNAPSHOT'
 

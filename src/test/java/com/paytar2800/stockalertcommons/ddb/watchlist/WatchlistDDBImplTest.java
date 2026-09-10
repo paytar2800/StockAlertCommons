@@ -261,4 +261,114 @@ public class WatchlistDDBImplTest {
         assertTrue(json.contains("\"tickers\":[\"AAPL\"]"));
         assertTrue(json.contains("\"lut\":123456789"));
     }
+
+    @Test
+    public void testGetWatchlistsMetadataForUser() {
+        String userId = "user_meta";
+
+        WatchlistDataItem wl1 = WatchlistDataItem.builder()
+                .userId(userId)
+                .watchlistId("wl1")
+                .watchlistName("Watchlist Alpha")
+                .displayOrder(0)
+                .tickers(Arrays.asList("AAPL", "MSFT"))
+                .build();
+
+        WatchlistDataItem wl2 = WatchlistDataItem.builder()
+                .userId(userId)
+                .watchlistId("wl2")
+                .watchlistName("Watchlist Beta")
+                .displayOrder(1)
+                .tickers(Arrays.asList("TSLA", "NVDA", "AMZN"))
+                .build();
+
+        WatchlistDataItem otherUserWl = WatchlistDataItem.builder()
+                .userId("other_meta_user")
+                .watchlistId("wl1")
+                .watchlistName("Other Watchlist")
+                .displayOrder(0)
+                .tickers(Arrays.asList("GOOGL"))
+                .build();
+
+        watchlistDAO.saveWatchlist(wl1);
+        watchlistDAO.saveWatchlist(wl2);
+        watchlistDAO.saveWatchlist(otherUserWl);
+
+        List<WatchlistDataItem> metadataList = watchlistDAO.getWatchlistsMetadataForUser(userId);
+        assertNotNull(metadataList);
+        assertEquals(2, metadataList.size());
+
+        for (WatchlistDataItem item : metadataList) {
+            assertEquals(userId, item.getUserId());
+            assertNotNull(item.getWatchlistId());
+            assertNotNull(item.getWatchlistName());
+            assertNotNull(item.getDisplayOrder());
+            assertNotNull(item.getLastUpdateTime());
+            // Tickers must not be projected in the metadata GSI
+            assertNull(item.getTickers());
+        }
+
+        // Verify non-existent user returns empty list
+        List<WatchlistDataItem> emptyList = watchlistDAO.getWatchlistsMetadataForUser("non_existent_user");
+        assertNotNull(emptyList);
+        assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
+    public void testNullQueryResults() {
+        com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper nullMapper =
+                new com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper(null) {
+                    @Override
+                    public <T> com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList<T> query(
+                            Class<T> clazz, com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression<T> queryExpression) {
+                        return null;
+                    }
+                };
+        WatchlistDAO dao = new WatchlistDDBImpl(nullMapper);
+        assertNotNull(dao.getWatchlistsForUser("u"));
+        assertTrue(dao.getWatchlistsForUser("u").isEmpty());
+        assertNotNull(dao.getWatchlistsMetadataForUser("u"));
+        assertTrue(dao.getWatchlistsMetadataForUser("u").isEmpty());
+    }
+
+    @Test
+    public void testWatchlistDataItemEqualsAndHashCode() {
+        WatchlistDataItem item1 = WatchlistDataItem.builder()
+                .userId("u1")
+                .watchlistId("w1")
+                .watchlistName("Name1")
+                .displayOrder(0)
+                .tickers(Arrays.asList("AAPL"))
+                .lastUpdateTime(100L)
+                .build();
+
+        WatchlistDataItem item2 = WatchlistDataItem.builder()
+                .userId("u1")
+                .watchlistId("w1")
+                .watchlistName("Name1")
+                .displayOrder(0)
+                .tickers(Arrays.asList("AAPL"))
+                .lastUpdateTime(100L)
+                .build();
+
+        WatchlistDataItem diffItem = WatchlistDataItem.builder()
+                .userId("u2")
+                .watchlistId("w2")
+                .build();
+
+        assertEquals(item1, item2);
+        assertEquals(item1.hashCode(), item2.hashCode());
+        assertNotEquals(item1, diffItem);
+        assertNotEquals(item1, null);
+        assertNotEquals(item1, new Object());
+        assertEquals(item1, item1);
+        assertNotNull(item1.toString());
+
+        WatchlistDataItem empty1 = new WatchlistDataItem();
+        WatchlistDataItem empty2 = new WatchlistDataItem();
+        assertEquals(empty1, empty2);
+        assertEquals(empty1.hashCode(), empty2.hashCode());
+
+        assertNotNull(WatchlistDataItem.builder().toString());
+    }
 }

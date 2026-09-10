@@ -9,6 +9,8 @@ public interface WatchlistDAO {
 
     List<WatchlistDataItem> getWatchlistsForUser(String userId);
 
+    List<WatchlistDataItem> getWatchlistsMetadataForUser(String userId);
+
     Optional<WatchlistDataItem> getWatchlist(String userId, String watchlistId);
 
     void saveWatchlist(WatchlistDataItem item);
