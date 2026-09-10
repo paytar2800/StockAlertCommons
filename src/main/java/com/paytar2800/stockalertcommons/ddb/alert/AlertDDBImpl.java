@@ -165,6 +165,7 @@ public class AlertDDBImpl implements AlertDAO {
      */
     @Override
     public void putNewAlert(AlertDataItem alertDataItem, boolean isNewAlert) {
+        alertDataItem.setLastUpdateTime(System.currentTimeMillis());
         if (isNewAlert) {
             TransactionWriteRequest transactionWriteRequest = new TransactionWriteRequest();
 
@@ -198,6 +199,7 @@ public class AlertDDBImpl implements AlertDAO {
 
     @Override
     public void updateAlert(AlertDataItem alertDataItem) {
+        alertDataItem.setLastUpdateTime(System.currentTimeMillis());
         DynamoDBMapperConfig dynamoDBMapperConfig = AlertDDBUtils.getDynamoDBMapperConfigForPartialUpdate();
 
         DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();

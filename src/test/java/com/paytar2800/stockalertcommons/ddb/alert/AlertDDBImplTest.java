@@ -60,6 +60,9 @@ public class AlertDDBImplTest {
             alertDAO.putNewAlert(alertDataItem, true);
           });
            alertDataItemList.forEach(alertDataItem -> {
+            AlertDataItem loaded = (AlertDataItem) LocalDDBServer.loadItemFromDB(alertDataItem);
+            assertNotNull(loaded.getLastUpdateTime());
+            assertTrue(loaded.getLastUpdateTime() > 0);
             StockDataItem stockItem = (StockDataItem) LocalDDBServer.loadItemFromDB(new StockDataItem(alertDataItem.getTicker()));
             assertEquals(stockCountMap.get(stockItem.getTicker()), stockItem.getAlertCount());
         });

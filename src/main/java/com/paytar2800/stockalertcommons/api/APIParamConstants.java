@@ -48,6 +48,7 @@ public class APIParamConstants {
     public static final String API_ISNEW_ALERT_PARAM = "isNew";
     public static final String API_EXCHANGE_PARAM = "exch";
     public static final String API_DAY_PARAM = "day";
+    public static final String API_LAST_UPDATE_TIME_PARAM = "lut";
 
     /*
      * UserAPI Params
@@ -61,5 +62,14 @@ public class APIParamConstants {
     public static final String API_ALERT_SOUND = "sound";
     public static final String API_DEVICE_OS = "os";
     public static final String API_LOCALE = "loc";
+    public static final String API_WATCHLIST_UPDATE_TIME_PARAM = "wut";
+    public static final String API_ALERT_UPDATE_TIME_PARAM = "aut";
+
+    /*
+     * WatchlistAPI Params
+     */
+    public static final String API_WATCHLIST_NAME_PARAM = "name";
+    public static final String API_DISPLAY_ORDER_PARAM = "ord";
+    public static final String API_TICKERS_PARAM = "tickers";
 
 }

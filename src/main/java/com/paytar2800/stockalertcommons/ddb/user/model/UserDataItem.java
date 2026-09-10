@@ -72,6 +72,14 @@ public class UserDataItem {
     @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_DEVICE_LOCALE)
     private String locale;
 
+    @SerializedName(API_WATCHLIST_UPDATE_TIME_PARAM)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_WATCHLIST_UPDATE_TIME_KEY)
+    private Long watchlistUpdateTime;
+
+    @SerializedName(API_ALERT_UPDATE_TIME_PARAM)
+    @DynamoDBAttribute(attributeName = UserDDBConstants.TABLE_ALERT_UPDATE_TIME_KEY)
+    private Long alertUpdateTime;
+
     @Expose(serialize = false, deserialize = false)
     @DynamoDBIndexHashKey(attributeName = UserDDBConstants.TABLE_HAS_CHANGED_KEY,
             globalSecondaryIndexName = UserDDBConstants.TABLE_HAS_CHANGED_GSI_KEY)

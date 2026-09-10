@@ -113,6 +113,10 @@ public class AlertDataItem implements IAlertDBItem {
     @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_PRICE_VS_52W_ALERT_PARAM)
     private PriceVs52wRangeAlertItem priceVs52wRangeAlertItem;
 
+    @SerializedName(API_LAST_UPDATE_TIME_PARAM)
+    @DynamoDBAttribute(attributeName = AlertDDBConstants.ALERT_LAST_UPDATE_TIME_KEY)
+    private Long lastUpdateTime;
+
     @SerializedName(API_ISNEW_ALERT_PARAM)
     private boolean isNewAlert;
 

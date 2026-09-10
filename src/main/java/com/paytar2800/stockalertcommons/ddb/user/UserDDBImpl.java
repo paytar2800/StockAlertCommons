@@ -161,4 +161,22 @@ public class UserDDBImpl implements UserDAO {
         NextTokenSerializer nextTokenSerializer = NextTokenSerializer.getInstance();
         return nextTokenSerializer.deserializeExclusiveStartKey(token);
     }
+
+    @Override
+    public void updateWatchlistUpdateTime(String userId, Long timestamp) {
+        UserDataItem item = UserDataItem.builder()
+                .userId(userId)
+                .watchlistUpdateTime(timestamp)
+                .build();
+        updateItem(item);
+    }
+
+    @Override
+    public void updateAlertUpdateTime(String userId, Long timestamp) {
+        UserDataItem item = UserDataItem.builder()
+                .userId(userId)
+                .alertUpdateTime(timestamp)
+                .build();
+        updateItem(item);
+    }
 }

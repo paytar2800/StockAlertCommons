@@ -205,5 +205,36 @@ public class UserDDBImplTest {
         });
     }
 
+    @Test
+    public void testUpdateWatchlistUpdateTime() {
+        itemList.forEach(this::addItemToDB);
+        String userId = itemList.get(0).getUserId();
+        Long timestamp = 1700000000000L;
+
+        userDAO.updateWatchlistUpdateTime(userId, timestamp);
+
+        UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(
+                UserDataItem.builder().userId(userId).build());
+        assertNotNull(actualItem);
+        assertEquals(timestamp, actualItem.getWatchlistUpdateTime());
+        // Verify other fields were not erased
+        assertEquals(itemList.get(0).getEmailId(), actualItem.getEmailId());
+    }
+
+    @Test
+    public void testUpdateAlertUpdateTime() {
+        itemList.forEach(this::addItemToDB);
+        String userId = itemList.get(0).getUserId();
+        Long timestamp = 1700000005000L;
+
+        userDAO.updateAlertUpdateTime(userId, timestamp);
+
+        UserDataItem actualItem = (UserDataItem) LocalDDBServer.loadItemFromDB(
+                UserDataItem.builder().userId(userId).build());
+        assertNotNull(actualItem);
+        assertEquals(timestamp, actualItem.getAlertUpdateTime());
+        // Verify other fields were not erased
+        assertEquals(itemList.get(0).getEmailId(), actualItem.getEmailId());
+    }
 
 }

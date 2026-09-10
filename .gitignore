@@ -5,3 +5,5 @@ lombok.config
 .idea/
 build/
 gradle/
+bin/
+.vscode/

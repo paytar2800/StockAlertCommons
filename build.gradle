@@ -1,6 +1,15 @@
 plugins {
     id 'java'
     id "io.freefair.lombok" version "6.5.0"
+    id 'jacoco'
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.required = true
+    }
 }
 
 group 'com.paytar2800'

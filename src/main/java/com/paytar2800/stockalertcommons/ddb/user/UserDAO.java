@@ -29,4 +29,8 @@ public interface UserDAO {
     void deleteItem(@NonNull UserDataItem userDataItem);
 
     void copyUserDataToDeletedDataTable(UserDataItem userDataItem);
+
+    void updateWatchlistUpdateTime(String userId, Long timestamp);
+
+    void updateAlertUpdateTime(String userId, Long timestamp);
 }
