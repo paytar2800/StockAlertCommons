@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static com.paytar2800.stockalertcommons.api.APIParamConstants.*;
@@ -147,6 +149,34 @@ public class AlertDataItem implements IAlertDBItem {
     @DynamoDBIgnore
     private boolean isAlertEmpty(IAlertDBItem iAlertDBItem) {
         return iAlertDBItem == null || iAlertDBItem.isEmpty();
+    }
+
+    // All 17 alert-type slots on this item, for code that needs to act on
+    // "whichever ones are set" without hardcoding a subset (see
+    // AlertDDBImpl.updateAlertItemTriggerTime, which used to only persist
+    // trigger time for the first 4 of these -- the rest silently lost their
+    // snooze on every cache eviction/restart).
+    @DynamoDBIgnore
+    public List<IAlertDBItem> getAllAlertItems() {
+        return Arrays.asList(
+                simplePriceAlertItem,
+                simplePriceLadderAlertItem,
+                simpleDailyPercentAlertItem,
+                netPercentChangeAlertItem,
+                simpleVolumePercentAlertItem,
+                earningsAlertItem,
+                dividendAlertItem,
+                fiftyDayAvgAlertItem,
+                twoHundredDayAvgAlertItem,
+                pegRatioAlertItem,
+                shortPercentFloatAlertItem,
+                shortRatioAlertItem,
+                forwardPEAlertItem,
+                trailingPEAlertItem,
+                priceVsFiftyDaySMAAlertItem,
+                priceVsTwoHundredDaySMAAlertItem,
+                priceVs52wRangeAlertItem
+        );
     }
 
    /* @Expose(serialize = false, deserialize = false)
