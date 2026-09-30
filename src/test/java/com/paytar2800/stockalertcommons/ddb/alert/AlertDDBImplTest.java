@@ -417,6 +417,40 @@ public class AlertDDBImplTest {
         alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
     }
 
+    // Regression test: updateAlertItemTriggerTime used to only persist trigger time
+    // for 4 of the 17 alert types (Price, DailyPercent, NetPercent, Volume). Any
+    // other type -- including this one, one of the 3 newest -- silently lost its
+    // snooze on every cache eviction/server restart, letting it re-notify right away.
+    @Test
+    public void Test_UpdateAlertTriggeredItem_forPreviouslyUncoveredAlertType() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+
+        PriceVsFiftyDaySMAAlertItem priceVsFiftyDaySMAAlertItem = PriceVsFiftyDaySMAAlertItem.builder()
+                .high(5d)
+                .build();
+
+        alertDataItem.setPriceVsFiftyDaySMAAlertItem(priceVsFiftyDaySMAAlertItem);
+
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        AlertDataItem newAlertDataItem = alertDAO.getAlert(alertDataItem).get();
+
+        assertNull(newAlertDataItem.getPriceVsFiftyDaySMAAlertItem().getTriggerTime());
+
+        PriceVsFiftyDaySMAAlertItem priceVsFiftyDaySMAAlertItemWithTriggerTime = PriceVsFiftyDaySMAAlertItem.builder()
+                .triggerTime(200L)
+                .build();
+
+        alertDataItem.setPriceVsFiftyDaySMAAlertItem(priceVsFiftyDaySMAAlertItemWithTriggerTime);
+
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        newAlertDataItem = alertDAO.getAlert(alertDataItem).get();
+
+        assertEquals(Long.valueOf(200L), newAlertDataItem.getPriceVsFiftyDaySMAAlertItem().getTriggerTime());
+    }
+
     @Test
     public void Test_UpdatedAlertItem() {
         /*alertDataItemList.get(0).setHasChanged(true);

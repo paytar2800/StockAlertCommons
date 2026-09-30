@@ -104,10 +104,13 @@ public class AlertDDBImpl implements AlertDAO {
 
         Map<String, AttributeValue> attributeValues = new HashMap<>();
 
-        appendAlertTrigger(alertDataItem.getSimplePriceAlertItem(), updateExpressionBuilder, attributeValues);
-        appendAlertTrigger(alertDataItem.getSimpleDailyPercentAlertItem(), updateExpressionBuilder, attributeValues);
-        appendAlertTrigger(alertDataItem.getNetPercentChangeAlertItem(), updateExpressionBuilder, attributeValues);
-        appendAlertTrigger(alertDataItem.getSimpleVolumePercentAlertItem(), updateExpressionBuilder, attributeValues);
+        // Was hardcoded to only these 4 of the 17 alert types -- every other type
+        // (Price Ladder, Earnings, Dividend, the SMA/PE/ratio alerts, and the 3
+        // newest Price-vs-* types) silently lost its trigger time/snooze on every
+        // cache eviction (60 min) or server restart, letting it re-notify right away.
+        for (IAlertDBItem item : alertDataItem.getAllAlertItems()) {
+            appendAlertTrigger(item, updateExpressionBuilder, attributeValues);
+        }
 
         if (!updateExpressionBuilder.toString().isEmpty()) {
             String updateExpression = "SET " + updateExpressionBuilder.toString();
