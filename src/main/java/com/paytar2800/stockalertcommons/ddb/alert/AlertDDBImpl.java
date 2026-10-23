@@ -102,6 +102,7 @@ public class AlertDDBImpl implements AlertDAO {
 
         StringBuilder updateExpressionBuilder = new StringBuilder();
 
+        Map<String, String> attributeNames = new HashMap<>();
         Map<String, AttributeValue> attributeValues = new HashMap<>();
 
         // Was hardcoded to only these 4 of the 17 alert types -- every other type
@@ -109,14 +110,16 @@ public class AlertDDBImpl implements AlertDAO {
         // newest Price-vs-* types) silently lost its trigger time/snooze on every
         // cache eviction (60 min) or server restart, letting it re-notify right away.
         for (IAlertDBItem item : alertDataItem.getAllAlertItems()) {
-            appendAlertTrigger(item, updateExpressionBuilder, attributeValues);
+            appendAlertTrigger(item, updateExpressionBuilder, attributeNames, attributeValues);
         }
 
-        if (!updateExpressionBuilder.toString().isEmpty()) {
-            String updateExpression = "SET " + updateExpressionBuilder.toString();
-            request.setUpdateExpression(updateExpression);
+        // No alert type has a trigger time: nothing to save (DynamoDB rejects an update with no values).
+        if (updateExpressionBuilder.length() == 0) {
+            return;
         }
 
+        request.setUpdateExpression("SET " + updateExpressionBuilder);
+        request.setExpressionAttributeNames(attributeNames);
         request.setExpressionAttributeValues(attributeValues);
         request.setConditionExpression("attribute_exists(" + AlertDDBConstants.ALERT_TICKER_KEY + ") AND " +
                 "attribute_exists(" + AlertDDBConstants.ALERT_USERWATCHLISTID_KEY + ")");
@@ -124,32 +127,30 @@ public class AlertDDBImpl implements AlertDAO {
         customDynamoDBMapper.updateDBItem(request);
     }
 
+    // Attribute names go through placeholders (#k0, #t0): some start with a digit (50dAvg, 200dAvg), which
+    // DynamoDB does not accept in an update expression.
     private void appendAlertTrigger(IAlertDBItem alertDBItem, @NonNull StringBuilder updateExpressionBuilder,
+                                    Map<String, String> attributeNames,
                                     Map<String, AttributeValue> attributeUpdateValues) {
 
         if (alertDBItem == null || alertDBItem.getTriggerTime() == null) {
             return;
         }
 
-        String DOT_SEPARATOR = ".";
-        String EQUALS_STR = " = ";
-        String COMMA_SEPARATOR = ",";
-        String COLON_STR = ":";
+        int index = attributeUpdateValues.size();
+        String alertKey = "#k" + index;
+        String triggerTimeKey = "#t" + index;
+        String valueKey = ":v" + index;
 
-        String attributeValueKey = COLON_STR + alertDBItem.getDBKeyName();
-
-        if(!updateExpressionBuilder.toString().isEmpty()){
-            updateExpressionBuilder.append(COMMA_SEPARATOR);
+        if (updateExpressionBuilder.length() > 0) {
+            updateExpressionBuilder.append(",");
         }
 
-        updateExpressionBuilder.append(alertDBItem.getDBKeyName())
-                .append(DOT_SEPARATOR)
-                .append(alertDBItem.getTriggerTimeDBKeyName())
-                .append(EQUALS_STR)
-                .append(attributeValueKey);
+        updateExpressionBuilder.append(alertKey).append(".").append(triggerTimeKey).append(" = ").append(valueKey);
 
-        attributeUpdateValues.put(attributeValueKey,
-                new AttributeValue().withN(String.valueOf(alertDBItem.getTriggerTime())));
+        attributeNames.put(alertKey, alertDBItem.getDBKeyName());
+        attributeNames.put(triggerTimeKey, alertDBItem.getTriggerTimeDBKeyName());
+        attributeUpdateValues.put(valueKey, new AttributeValue().withN(String.valueOf(alertDBItem.getTriggerTime())));
     }
 
 

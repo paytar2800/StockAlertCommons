@@ -47,6 +47,6 @@ public class SimplePriceLadderAlertItem implements IAlertDBItem {
     @DynamoDBIgnore
     @Override
     public String getDBKeyName() {
-        return AlertDDBConstants.ALERT_SIMPLEPRICEALERT_KEY;
+        return AlertDDBConstants.ALERT_PRICE_LADDER_ALERT_KEY;
     }
 }

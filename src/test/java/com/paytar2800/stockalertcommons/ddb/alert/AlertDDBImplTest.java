@@ -465,4 +465,73 @@ public class AlertDDBImplTest {
         assertEquals(paginatedItem.getCurrentItemList().get(0), alertDataItemList.get(0));
         assertEquals(paginatedItem.getCurrentItemList().get(1), alertDataItemList.get(1));*/
     }
+
+    // The price ladder used to report the simple price alert's attribute name, so its trigger time collided with
+    // (or overwrote) Price.TT and DynamoDB rejected the whole update.
+    @Test
+    public void Test_UpdateAlertTriggerTime_priceLadderIsSavedSeparatelyFromSimplePrice() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+        alertDataItem.setSimplePriceAlertItem(SimplePriceAlertItem.builder().highPrice(10d).build());
+        alertDataItem.setSimplePriceLadderAlertItem(
+                SimplePriceLadderAlertItem.builder().highPrice(20d).ladderStepPrice(1d).build());
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        alertDataItem.setSimplePriceAlertItem(SimplePriceAlertItem.builder().triggerTime(100L).build());
+        alertDataItem.setSimplePriceLadderAlertItem(SimplePriceLadderAlertItem.builder().triggerTime(300L).build());
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        AlertDataItem loaded = alertDAO.getAlert(alertDataItem).get();
+        assertEquals(Long.valueOf(100L), loaded.getSimplePriceAlertItem().getTriggerTime());
+        assertEquals(Long.valueOf(300L), loaded.getSimplePriceLadderAlertItem().getTriggerTime());
+        assertEquals(Double.valueOf(10d), loaded.getSimplePriceAlertItem().getHighPrice());
+    }
+
+    @Test
+    public void Test_UpdateAlertTriggerTime_ladderAloneDoesNotTouchTheSimplePriceAlert() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+        alertDataItem.setSimplePriceAlertItem(SimplePriceAlertItem.builder().highPrice(10d).build());
+        alertDataItem.setSimplePriceLadderAlertItem(
+                SimplePriceLadderAlertItem.builder().highPrice(20d).ladderStepPrice(1d).build());
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        alertDataItem.setSimplePriceAlertItem(null);
+        alertDataItem.setSimplePriceLadderAlertItem(SimplePriceLadderAlertItem.builder().triggerTime(300L).build());
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        AlertDataItem loaded = alertDAO.getAlert(alertDataItem).get();
+        assertEquals(Long.valueOf(300L), loaded.getSimplePriceLadderAlertItem().getTriggerTime());
+        assertNull("the simple price alert keeps no trigger time", loaded.getSimplePriceAlertItem().getTriggerTime());
+    }
+
+    // Attribute names that start with a digit used to make DynamoDB reject the update with a syntax error.
+    @Test
+    public void Test_UpdateAlertTriggerTime_forAttributeNamesStartingWithADigit() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+        alertDataItem.setFiftyDayAvgAlertItem(FiftyDayAvgAlertItem.builder().high(5d).build());
+        alertDataItem.setTwoHundredDayAvgAlertItem(TwoHundredDayAvgAlertItem.builder().high(6d).build());
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        alertDataItem.setFiftyDayAvgAlertItem(FiftyDayAvgAlertItem.builder().triggerTime(500L).build());
+        alertDataItem.setTwoHundredDayAvgAlertItem(TwoHundredDayAvgAlertItem.builder().triggerTime(600L).build());
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        AlertDataItem loaded = alertDAO.getAlert(alertDataItem).get();
+        assertEquals(Long.valueOf(500L), loaded.getFiftyDayAvgAlertItem().getTriggerTime());
+        assertEquals(Long.valueOf(600L), loaded.getTwoHundredDayAvgAlertItem().getTriggerTime());
+    }
+
+    // Nothing to save used to fail with "ExpressionAttributeValues must not be empty".
+    @Test
+    public void Test_UpdateAlertTriggerTime_withNoTriggerTimeIsANoOp() {
+
+        AlertDataItem alertDataItem = alertDataItemList.get(0);
+        alertDAO.putNewAlert(alertDataItem, true);
+
+        alertDAO.updateAlertTriggerTimeOnly(alertDataItem);
+
+        assertTrue(alertDAO.getAlert(alertDataItem).isPresent());
+    }
 }
