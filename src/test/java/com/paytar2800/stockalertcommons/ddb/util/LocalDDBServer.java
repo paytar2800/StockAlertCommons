@@ -62,6 +62,13 @@ public class LocalDDBServer {
         return dynamoDBMapper;
     }
 
+    public static AmazonDynamoDB getDynamoDB() {
+        if (dynamoDB == null) {
+            connectToDB();
+        }
+        return dynamoDB;
+    }
+
     public static CustomDynamoDBMapper getCustomMapper(){
         return new CustomDynamoDBMapper(dynamoDB);
     }

@@ -72,4 +72,10 @@ public class APIParamConstants {
     public static final String API_DISPLAY_ORDER_PARAM = "ord";
     public static final String API_TICKERS_PARAM = "tickers";
 
+    /*
+     * UserEarningsAPI Params
+     */
+    public static final String API_CUSTOM_TICKERS_PARAM = "customTickers";
+    public static final String API_HIDDEN_TICKERS_PARAM = "hiddenTickers";
+
 }
